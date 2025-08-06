@@ -99,7 +99,7 @@ class XMLReader(Reader):
         external_fields = self._external_fields()
         # fields should have unique names, but may not have unique instantiations
         # if FieldDefinitions are created on the fly, for example with class methods or @propertys
-        external_fields_names = [field.name for field in external_fields]
+        external_fields_names = set(field.name for field in external_fields)
         regular_fields = [
             field for field in self.fields
             if field.name not in external_fields_names
