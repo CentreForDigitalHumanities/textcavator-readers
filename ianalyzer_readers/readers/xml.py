@@ -185,3 +185,64 @@ class XMLReader(Reader):
 
     def data_from_response(self, data: Response) -> bs4.BeautifulSoup:
         return bs4.BeautifulSoup(data.content, 'lxml-xml')
+
+    def _bowl_from_soup(self, soup, toplevel_tag=None, entry_tag=None, metadata = {}):
+        '''
+        Returns bowl (subset of soup) of soup object. Bowl contains everything within the toplevel tag.
+        If no such tag is present, it contains the entire soup.
+        '''
+        if toplevel_tag == None:
+            toplevel_tag = self._get_tag_requirements(self.tag_toplevel, metadata)
+        else:
+            toplevel_tag = self._get_tag_requirements(toplevel_tag, metadata)
+
+        return soup.find(**toplevel_tag) if toplevel_tag else soup
+
+    def _metadata_from_xml(self, filename, tags):
+        '''
+        Given a filename of an xml with metadata, and a range of tags to extract,
+        return a dictionary of all the contents of the requested tags.
+        A tag can either be a string, or a dictionary:
+        {
+            "tag": "tag_to_extract",
+            "attribute": attribute to additionally filter on, optional
+            "save_as": key to use in output dictionary, optional
+        }
+        '''
+        out_dict = {}
+        soup = self._soup_from_xml(filename)
+        for tag in tags:
+            if isinstance(tag, str):
+                tag_info = soup.find(tag)
+                if not tag_info:
+                    continue
+                out_dict[tag] = tag_info.text
+            else:
+                candidates = soup.find_all(tag['tag'])
+                if 'attribute' in tag:
+                    right_tag = next((candidate for candidate in candidates if
+                                      candidate.attrs == tag['attribute']), None)
+                elif 'list' in tag:
+                    if 'subtag' in tag:
+                        right_tag = [candidate.find(
+                            tag['subtag']) for candidate in candidates]
+                    else:
+                        right_tag = candidates
+                elif 'subtag' in tag:
+                    right_tag = next((candidate.find(tag['subtag']) for candidate in candidates if
+                                      candidate.find(tag['subtag'])), None)
+                else:
+                    right_tag = next((candidate for candidate in candidates if
+                                      candidate.attrs == {}), None)
+                if not right_tag:
+                    continue
+                if 'save_as' in tag:
+                    out_tag = tag['save_as']
+                else:
+                    out_tag = tag['tag']
+                if 'list' in tag:
+                    out_dict[out_tag] = [t.text for t in right_tag]
+                else:
+                    out_dict[out_tag] = right_tag.text
+        return out_dict
+
