@@ -210,7 +210,7 @@ class XMLReader(Reader):
         }
         '''
         out_dict = {}
-        soup = self._soup_from_xml(filename)
+        soup = self.data_from_file(filename)
         for tag in tags:
             if isinstance(tag, str):
                 tag_info = soup.find(tag)
