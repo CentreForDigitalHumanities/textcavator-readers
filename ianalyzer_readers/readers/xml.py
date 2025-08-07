@@ -97,7 +97,7 @@ class XMLReader(Reader):
 
     def extract_document(self, **document_data) -> Document:
         external_fields = self._external_fields()
-        # fields should have unique names, but may not have unique instantiations
+        # fields should have unique names, but may not have stable instantiations
         # if FieldDefinitions are created on the fly, for example with class methods or @propertys
         external_fields_names = set(field.name for field in external_fields)
         regular_fields = [
