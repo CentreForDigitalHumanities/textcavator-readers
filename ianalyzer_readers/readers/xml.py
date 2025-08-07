@@ -8,6 +8,7 @@ import bs4
 import logging
 from typing import Dict, Iterable, List, Optional
 from requests import Response
+import gzip
 
 from .. import extract
 from .core import Reader, Document, Field
@@ -168,11 +169,14 @@ class XMLReader(Reader):
 
     def data_from_file(self, filename: str) -> bs4.BeautifulSoup:
         '''
-        Returns beatifulsoup soup object for a given xml file
+        Returns beatifulsoup soup object for a given xml or gz file (which contains an xml file)
         '''
         # Loading XML
         logger.info('Reading XML file {} ...'.format(filename))
-        with open(filename, 'rb') as f:
+        local_open = open
+        if filename.endswith('.gz'):
+            local_open = gzip.open
+        with local_open(filename, 'rb') as f:
             data = f.read()
         logger.info('Loaded {} into memory...'.format(filename))
         return self.data_from_bytes(data)
