@@ -7,7 +7,7 @@ from test_xml_reader import target_documents
 
 class HamletEtreeXMLReader(EtreeXMLReader):
     data_directory = os.path.join(os.path.dirname(__file__), 'data')
-    path_entry = './content/act/scene/lines'
+    path_entry = '/document/content/act/scene/lines'
 
     def sources(self, **kwargs):
         for filename in os.listdir(self.data_directory):
@@ -17,15 +17,15 @@ class HamletEtreeXMLReader(EtreeXMLReader):
 
     title = Field(
         'title',
-        XPath('./meta/title', toplevel=True),
+        XPath('string(/document/meta/title/text())'),
     )
     character = Field(
         'character',
-        XPath('.', attribute='character')
+        XPath('string(@character)')
     )
     lines = Field(
         'lines',
-        XPath('l', multiple=True, transform='\n'.join)
+        XPath('l/text()', transform='\n'.join)
     )
 
     fields = [character, lines, title]
@@ -34,5 +34,5 @@ def test_etree_xml_reader():
     reader = HamletEtreeXMLReader()
     docs = reader.documents()
 
-    for doc, target in zip(docs, target_documents):
+    for doc, target in zip(docs, target_documents, strict=True):
         assert doc == target

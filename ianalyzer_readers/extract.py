@@ -486,40 +486,12 @@ class XPath(Extractor):
     Extractor for XML data from the EtreeXMLReader
     '''
 
-    def __init__(self,
-        xpath: str,
-        multiple: bool = False,
-        toplevel: bool = False,
-        attribute: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, xpath: str, **kwargs):
         super().__init__(**kwargs)
         self.xpath = xpath
-        self.multiple = multiple
-        self.toplevel = toplevel
-        self.attribute = attribute
 
-    def _select(self, element, root) -> List:
-        el = root if self.toplevel else element
-        if self.multiple:
-            return el.findall(self.xpath)
-        else:
-            return [el.find(self.xpath)]
-
-
-    def _extract(self, element):
-        if self.attribute:
-            return element.get(self.attribute, None)
-        return element.text
-
-
-    def _apply(self, element, root, *nargs, **kwargs):
-        elements = self._select(element, root)
-        if self.multiple:
-            return list(map(self._extract, elements))
-        else:
-            if len(elements):
-                return self._extract(elements[0])
+    def _apply(self, element, *nargs, **kwargs):
+        return element.xpath(self.xpath)
 
 
 class CSV(Extractor):
