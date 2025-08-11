@@ -1,6 +1,7 @@
 import os
 
 import requests
+from bs4 import SoupStrainer
 
 from ianalyzer_readers.readers.xml import XMLReader
 from ianalyzer_readers.readers.core import Field
@@ -45,6 +46,33 @@ class HamletXMLReader(XMLReader):
     )
 
     fields = [title, character, lines]
+
+
+def test_xml_reader():
+    reader = HamletXMLReader()
+    docs = reader.documents()
+
+    for doc, target in zip(docs, target_documents, strict=True):
+        assert doc == target
+
+
+class FilteredHamletXMLReader(HamletXMLReader):
+    '''
+    Altered version of HamletXMLReader that only parses `<content>`. Will still
+    try to extract the title from the metadata, which should find nothing.
+    '''
+    tag_toplevel = CurrentTag()
+    parse_only = SoupStrainer('content')
+
+
+def test_xml_reader_parse_only():
+    reader = FilteredHamletXMLReader()
+    docs = reader.documents()
+
+    for doc, target in zip(docs, target_documents, strict=True):
+        assert doc['title'] == None
+        assert doc['lines'] == target['lines']
+
 
 url_list = ['mock_path']
 
@@ -98,14 +126,6 @@ target_documents = [
         'lines': "Speak, I am bound to hear."
     },
 ]
-
-
-def test_xml_reader():
-    reader = HamletXMLReader()
-    docs = reader.documents()
-
-    for doc, target in zip(docs, target_documents):
-        assert doc == target
 
 
 class MockResponse(requests.Response):

@@ -6,7 +6,7 @@ Extraction is based on BeautifulSoup.
 
 import bs4
 import logging
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Any
 from requests import Response
 
 from .. import extract
@@ -71,6 +71,15 @@ class XMLReader(Reader):
         XMLTag. The metadata dictionary includes the values of "regular" fields for
         the document.
     '''
+
+    parse_only: Optional[bs4.SoupStrainer] = None
+    '''
+    Filter tags that will be parsed by BeautifulSoup. This can make parsing more
+    efficient by ignoring irrelevant elements.
+    
+    C.f. https://www.crummy.com/software/BeautifulSoup/bs4/doc/#SoupStrainer
+    '''
+
 
     def validate(self):
         # Make sure that extractors are sensible
@@ -181,7 +190,8 @@ class XMLReader(Reader):
         '''
         Parses content of a xml file
         '''
-        return bs4.BeautifulSoup(data, 'lxml-xml')
+        return bs4.BeautifulSoup(data, 'lxml-xml', parse_only=self.parse_only)
 
     def data_from_response(self, data: Response) -> bs4.BeautifulSoup:
-        return bs4.BeautifulSoup(data.content, 'lxml-xml')
+        return bs4.BeautifulSoup(data.content, 'lxml-xml', parse_only=self.parse_only)
+
