@@ -6,8 +6,18 @@ from requests import Response
 
 
 class EtreeXMLReader(Reader):
+    '''
+    Alternative to the XMLReader
+
+    - Built on lxml instead of BeautifulSoup
+    - Pairs with the `XPath` extractor: queries for fields are provided as XPath
+        expressions.
+
+    Faster than the XMLReader (I think?) at the cost of feature support.
+    '''
 
     path_entry: str
+    'Path expression to select document entry points'
 
     def validate(self):
         self._reject_extractors(extract.XML, extract.CSV, extract.JSON, extract.RDF)
