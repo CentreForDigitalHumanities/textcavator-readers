@@ -16,7 +16,6 @@ import bs4
 import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
-from xml.etree.ElementTree import Element
 
 logger = logging.getLogger()
 
@@ -500,7 +499,7 @@ class XPath(Extractor):
         self.toplevel = toplevel
         self.attribute = attribute
 
-    def _select(self, element: Element, root: Element) -> List[Element]:
+    def _select(self, element, root) -> List:
         el = root if self.toplevel else element
         if self.multiple:
             return el.findall(self.xpath)
@@ -508,13 +507,13 @@ class XPath(Extractor):
             return [el.find(self.xpath)]
 
 
-    def _extract(self, element: Element):
+    def _extract(self, element):
         if self.attribute:
             return element.get(self.attribute, None)
         return element.text
 
 
-    def _apply(self, element: Element, root: Element, *nargs, **kwargs):
+    def _apply(self, element, root, *nargs, **kwargs):
         elements = self._select(element, root)
         if self.multiple:
             return list(map(self._extract, elements))

@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ET
+from lxml import etree
 
 from ianalyzer_readers.readers.core import Reader, Field
 from ianalyzer_readers import extract
@@ -12,10 +12,10 @@ class EtreeXMLReader(Reader):
         self._reject_extractors(extract.XML, extract.CSV, extract.JSON, extract.RDF)
     
     def data_from_file(self, path):
-        tree = ET.parse(path)
+        tree = etree.parse(path)
         return tree
 
-    def iterate_data(self, data: ET.ElementTree, metadata):
+    def iterate_data(self, data: etree.ElementTree, metadata):
         root = data.getroot()
 
         for element in root.findall(self.path_entry):
