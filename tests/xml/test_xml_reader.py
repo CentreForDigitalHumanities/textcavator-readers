@@ -50,9 +50,10 @@ class HamletXMLReader(XMLReader):
 
 def test_xml_reader():
     reader = HamletXMLReader()
-    docs = reader.documents()
+    docs = list(reader.documents())
+    assert len(docs) == len(target_documents)
 
-    for doc, target in zip(docs, target_documents, strict=True):
+    for doc, target in zip(docs, target_documents):
         assert doc == target
 
 
@@ -67,9 +68,10 @@ class FilteredHamletXMLReader(HamletXMLReader):
 
 def test_xml_reader_parse_only():
     reader = FilteredHamletXMLReader()
-    docs = reader.documents()
+    docs = list(reader.documents())
+    assert len(docs) == len(target_documents)
 
-    for doc, target in zip(docs, target_documents, strict=True):
+    for doc, target in zip(docs, target_documents):
         assert doc['title'] == None
         assert doc['lines'] == target['lines']
 
