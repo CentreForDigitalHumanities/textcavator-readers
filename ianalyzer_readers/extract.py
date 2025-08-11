@@ -16,6 +16,7 @@ import bs4
 import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
+from xml.etree.ElementTree import Element
 
 logger = logging.getLogger()
 
@@ -479,6 +480,47 @@ class XML(Extractor):
                 node.attrs.get(self.attribute)
                 for node in soup if node.attrs.get(self.attribute) is not None
             ]
+
+
+class XPath(Extractor):
+    '''
+    Extractor for XML data from the EtreeXMLReader
+    '''
+
+    def __init__(self,
+        xpath: str,
+        multiple: bool = False,
+        toplevel: bool = False,
+        attribute: Optional[str] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.xpath = xpath
+        self.multiple = multiple
+        self.toplevel = toplevel
+        self.attribute = attribute
+
+    def _select(self, element: Element, root: Element) -> List[Element]:
+        el = root if self.toplevel else element
+        if self.multiple:
+            return el.findall(self.xpath)
+        else:
+            return [el.find(self.xpath)]
+
+
+    def _extract(self, element: Element):
+        if self.attribute:
+            return element.get(self.attribute, None)
+        return element.text
+
+
+    def _apply(self, element: Element, root: Element, *nargs, **kwargs):
+        elements = self._select(element, root)
+        if self.multiple:
+            return list(map(self._extract, elements))
+        else:
+            if len(elements):
+                return self._extract(elements[0])
 
 
 class CSV(Extractor):
