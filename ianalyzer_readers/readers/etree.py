@@ -28,5 +28,5 @@ class EtreeXMLReader(Reader):
     def iterate_data(self, data: etree.ElementTree, metadata):
         root = data.getroot()
 
-        for element in root.xpath(self.path_entry):
+        for element in root.iterfind(self.path_entry):
             yield { 'element': element }

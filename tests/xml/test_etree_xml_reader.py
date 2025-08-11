@@ -7,7 +7,7 @@ from test_xml_reader import target_documents
 
 class HamletEtreeXMLReader(EtreeXMLReader):
     data_directory = os.path.join(os.path.dirname(__file__), 'data')
-    path_entry = '/document/content/act/scene/lines'
+    path_entry = 'content/act/scene/lines'
 
     def sources(self, **kwargs):
         for filename in os.listdir(self.data_directory):
