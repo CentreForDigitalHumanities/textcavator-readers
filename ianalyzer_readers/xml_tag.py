@@ -69,7 +69,10 @@ class Tag:
         returns a generator or a `bs4.ResultSet` rather than collecting all results up
         front.
         '''
-        return soup.find_all(*self.args, **self.kwargs)
+        result = soup.find(*self.args, **self.kwargs)
+        while result is not None:
+            yield result
+            result = result.find_next(*self.args, **self.kwargs)
 
 
 class CurrentTag(Tag):
