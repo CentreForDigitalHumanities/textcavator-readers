@@ -69,10 +69,16 @@ class Tag:
         returns a generator or a `bs4.ResultSet` rather than collecting all results up
         front.
         '''
-        result = soup.find(*self.args, **self.kwargs)
-        while result is not None:
-            yield result
-            result = result.find_next(*self.args, **self.kwargs)
+        pool = soup.descendants if self.kwargs.get('recursive', True) else soup.children
+
+        def strainer_helper(name=None, attrs={}, string=None, **kwargs):
+            return bs4.SoupStrainer(name, attrs, string, **kwargs)
+        strainer = strainer_helper(*self.args, **self.kwargs)
+
+        for element in pool:
+            result = strainer.search(element)
+            if result:
+                yield result
 
 
 class CurrentTag(Tag):
