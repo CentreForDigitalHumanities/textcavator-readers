@@ -23,7 +23,7 @@ dependencies = [
 
 description = "Utilities for extracting XML, HTML, CSV, XLSX, and RDF data with a common interface"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   'Development Status :: 2 - Pre-Alpha',
   'Intended Audience :: Science/Research',

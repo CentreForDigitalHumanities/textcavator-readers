@@ -11,7 +11,7 @@ The basic usage is that you will use the utilities in this package to create a "
 
 ## Prerequisites
 
-Requires Python 3.9 or later.
+Requires Python 3.10 or later.
 
 ## Contents
 
