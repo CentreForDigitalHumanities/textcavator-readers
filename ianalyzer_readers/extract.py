@@ -309,13 +309,14 @@ class Cache(Extractor):
     Can be wrapped around another extractor to prevent repeatedly extracting the same
     value. 
 
-    This is based on an assumption that the value of your extractor is going to
-    be the same within a document, a source file, or even across the whole dataset. The
-    level is specified in the constructor.
+    Makes an assumption the value of the extractor is going to be the same within a
+    document, a source file, or even across the whole dataset. The level is specified in
+    the constructor.
 
     Parameters:
-        extractor: extractor 
-        level: Can be `'document'`, `'source'`, or `'reader'`
+        extractor: Extractor of which the value is returned and cached.
+        level: The level at which values should be cached. Can be `'document'`,
+            `'source'`, or `'reader'`.
         **kwargs: additional options to pass on to `Extractor`
     '''
 
