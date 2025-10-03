@@ -314,14 +314,37 @@ class Cache(Extractor):
     value. 
 
     Makes an assumption the value of the extractor is going to be the same within a
-    document, a source file, or even across the whole dataset. The level is specified in
-    the constructor.
+    document, a source file, or even across the whole dataset.
 
     Parameters:
         extractor: Extractor of which the value is returned and cached.
         level: The level at which values should be cached. Can be `'document'`,
             `'source'`, or `'reader'`.
         **kwargs: additional options to pass on to `Extractor`
+
+    Note: caching is based on the extractor instance and will not work across instances.
+    For instance, in the example below, there would be no caching across fields.
+
+    ```python
+    fields = [
+        Field(name='foo', extractor=Cache(XML('baz'))),
+        Field(name='bar', extractor=Cache(XML('baz')))
+    ]
+    ```
+
+    You could rewrite this as follows, so the XML tree is only queried once per document:
+
+    ```python
+    _my_extractor = Cache(XML('baz'))
+
+    fields = [
+        Field(name='foo', extractor=_my_extractor),
+        Field(name='bar', extractor=_my_extractor)
+    ]
+    ```
+
+    There is a similar issue when you use `@property` to define the `fields` of the
+    reader.
     '''
 
     def __init__(self, extractor: Extractor, level: str = 'document', **kwargs):
