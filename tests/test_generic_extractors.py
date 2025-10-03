@@ -73,6 +73,11 @@ def test_order_extractor():
     output = extractor.apply(index=1)
     assert output == 1
 
+def test_order_extractor_source_level():
+    extractor = Order(level='source')
+    output = extractor.apply(source_index=1, index=3)
+    assert output == 1
+
 
 def test_extractor_applicable_extractor():
     extractor = Constant('test', applicable=Metadata('testing'))

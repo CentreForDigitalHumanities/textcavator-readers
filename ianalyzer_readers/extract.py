@@ -288,20 +288,24 @@ class Pass(Extractor):
 
 class Order(Extractor):
     '''
-    An extractor that returns the index of the document in its
-    source file.
-
-    The index of the document needs to be passed on the by `Reader`, which needs to
-    implement some kind of counter in its `source2dicts` method. The `Reader` subclasses
-    in this package all implement this, and so `Order` can safely be used in any of them.
-    However, custom `Reader` subclasses may not support this extractor.
+    An extractor to keep track of the order of documents. By default, this is the order
+    of documents within their source, but you can also track the order of sources.
 
     Parameters:
+        level: Can be `'document'` or `'source'`. Whether to return the index of the
+            source, or of the document within the source.
         **kwargs: additional options to pass on to `Extractor`.
     '''
 
-    def _apply(self, index: int = None, *nargs, **kwargs):
-        return index
+    def __init__(self, level: str = 'document', **kwargs):
+        self.level = level
+        super().__init__(**kwargs)
+
+    def _apply(self, index: int = None, source_index: int = None, **kwargs):
+        if self.level == 'document':
+            return index
+        if self.level == 'source':
+            return source_index
 
 
 class Cache(Extractor):
