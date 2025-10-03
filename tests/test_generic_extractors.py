@@ -1,6 +1,6 @@
 import pytest
 from ianalyzer_readers.extract import (
-    Constant, Combined, Backup, Choice, Metadata, Pass, Order
+    Constant, Combined, Backup, Choice, Metadata, Pass, Order, Cache
 )
 
 def test_constant_extractor():
@@ -85,3 +85,33 @@ def test_extractor_applicable_callable():
         extractor = Constant('test', applicable=lambda metadata: metadata['testing'])
     assert extractor.apply(metadata={'testing': True}) == 'test'
     assert extractor.apply(metadata={'testing': False}) == None
+
+
+@pytest.mark.parametrize('level', ['document', 'source', 'reader'])
+def test_cache_extractor(level):
+    called = 0
+
+    def keep_count(value):
+        nonlocal called
+        called += 1
+        return value
+    
+    extractor = Cache(
+        Constant('test', transform=keep_count),
+        level=level,
+    )
+
+    sources = 2
+    docs_per_source = 3
+    fields_per_doc = 5
+
+    for source in range(sources):
+        for doc in range(docs_per_source):
+            for _ in range(fields_per_doc):
+                assert extractor.apply(source_index=source, index=doc) == 'test'
+
+    expected_calls = {
+        'document': sources * docs_per_source, 'source': sources, 'reader': 1
+    }
+
+    assert called == expected_calls[level]

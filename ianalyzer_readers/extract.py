@@ -11,11 +11,13 @@ import logging
 import traceback
 from typing import Any, Dict, Callable, Union, List, Optional, Iterable
 import warnings
+from functools import lru_cache
 
 import bs4
 import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
+
 
 logger = logging.getLogger()
 
@@ -300,6 +302,45 @@ class Order(Extractor):
 
     def _apply(self, index: int = None, *nargs, **kwargs):
         return index
+
+
+class Cache(Extractor):
+    '''
+    Can be wrapped around another extractor to prevent repeatedly extracting the same
+    value. 
+
+    This is based on an assumption that the value of your extractor is going to
+    be the same within a document, a source file, or even across the whole dataset. The
+    level is specified in the constructor.
+
+    Parameters:
+        extractor: extractor 
+        level: Can be `'document'`, `'source'`, or `'reader'`
+        **kwargs: additional options to pass on to `Extractor`
+    '''
+
+    def __init__(self, extractor: Extractor, level: str = 'document', **kwargs):
+        self.extractor = extractor
+        self.level = level
+        self.kwargs = {}
+        super().__init__(**kwargs)
+
+    def _apply(self, **kwargs):
+        self.kwargs = kwargs
+
+        if self.level == 'document':
+            cache_params = [kwargs['source_index'], kwargs['index']]
+        if self.level == 'source':
+            cache_params = [kwargs['source_index']]
+        if self.level == 'reader':
+            cache_params = []
+        
+        return self._apply_cached(*cache_params)
+
+    @lru_cache(maxsize=1)
+    def _apply_cached(self, *cache_parameters):
+        return self.extractor.apply(**self.kwargs)
+
 
 class XML(Extractor):
     '''
