@@ -11,11 +11,13 @@ import logging
 import traceback
 from typing import Any, Dict, Callable, Union, List, Optional, Iterable
 import warnings
+from functools import lru_cache
 
 import bs4
 import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
+
 
 logger = logging.getLogger()
 
@@ -286,20 +288,87 @@ class Pass(Extractor):
 
 class Order(Extractor):
     '''
-    An extractor that returns the index of the document in its
-    source file.
-
-    The index of the document needs to be passed on the by `Reader`, which needs to
-    implement some kind of counter in its `source2dicts` method. The `Reader` subclasses
-    in this package all implement this, and so `Order` can safely be used in any of them.
-    However, custom `Reader` subclasses may not support this extractor.
+    An extractor to keep track of the order of documents. By default, this is the order
+    of documents within their source, but you can also track the order of sources.
 
     Parameters:
+        level: Can be `'document'` or `'source'`. Whether to return the index of the
+            source, or of the document within the source.
         **kwargs: additional options to pass on to `Extractor`.
     '''
 
-    def _apply(self, index: int = None, *nargs, **kwargs):
-        return index
+    def __init__(self, level: str = 'document', **kwargs):
+        self.level = level
+        super().__init__(**kwargs)
+
+    def _apply(self, index: int = None, source_index: int = None, **kwargs):
+        if self.level == 'document':
+            return index
+        if self.level == 'source':
+            return source_index
+
+
+class Cache(Extractor):
+    '''
+    Can be wrapped around another extractor to prevent repeatedly extracting the same
+    value. 
+
+    Makes an assumption the value of the extractor is going to be the same within a
+    document, a source file, or even across the whole dataset.
+
+    Parameters:
+        extractor: Extractor of which the value is returned and cached.
+        level: The level at which values should be cached. Can be `'document'`,
+            `'source'`, or `'reader'`.
+        **kwargs: additional options to pass on to `Extractor`
+
+    Note: caching is based on the extractor instance and will not work across instances.
+    For instance, in the example below, there would be no caching across fields.
+
+    ```python
+    fields = [
+        Field(name='foo', extractor=Cache(XML('baz'))),
+        Field(name='bar', extractor=Cache(XML('baz')))
+    ]
+    ```
+
+    You could rewrite this as follows, so the XML tree is only queried once per document:
+
+    ```python
+    _my_extractor = Cache(XML('baz'))
+
+    fields = [
+        Field(name='foo', extractor=_my_extractor),
+        Field(name='bar', extractor=_my_extractor)
+    ]
+    ```
+
+    There is a similar issue when you use `@property` to define the `fields` of the
+    reader.
+    '''
+
+    def __init__(self, extractor: Extractor, level: str = 'document', **kwargs):
+        self.extractor = extractor
+        self.level = level
+        self.kwargs = {}
+        super().__init__(**kwargs)
+
+    def _apply(self, **kwargs):
+        self.kwargs = kwargs
+
+        if self.level == 'document':
+            cache_params = [kwargs['source_index'], kwargs['index']]
+        if self.level == 'source':
+            cache_params = [kwargs['source_index']]
+        if self.level == 'reader':
+            cache_params = []
+        
+        return self._apply_cached(*cache_params)
+
+    @lru_cache(maxsize=1)
+    def _apply_cached(self, *cache_parameters):
+        return self.extractor.apply(**self.kwargs)
+
 
 class XML(Extractor):
     '''
