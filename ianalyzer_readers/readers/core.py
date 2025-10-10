@@ -169,7 +169,7 @@ class Reader:
         '''
         raise NotImplementedError('Reader missing sources implementation')
 
-    def source2dicts(self, source: Source) -> Iterable[Document]:
+    def source2dicts(self, source: Source, source_index=-1) -> Iterable[Document]:
         '''
         Given a source file, returns an iterable of extracted documents.
 
@@ -193,7 +193,11 @@ class Reader:
         
         with context_manager as data:
             for index, extracted_data in enumerate(self.iterate_data(data, metadata)):
-                base_data = {'metadata': metadata, 'index': index}
+                base_data = {
+                    'metadata': metadata,
+                    'index': index,
+                    'source_index': source_index,
+                }
                 document_data = base_data | extracted_data
                 document = self.extract_document(**document_data)
                 if self._has_required_fields(document):
@@ -355,12 +359,13 @@ class Reader:
                 are based on the extractor of each field.
         '''
         sources = sources or self.sources()
-        return (document
-                for source in sources
-                for document in self.source2dicts(
-                    source
-                )
-                )
+        return (
+            document
+            for i, source in enumerate(sources)
+            for document in self.source2dicts(
+                source, source_index=i
+            )
+        )
 
     def export_csv(self, path: str, sources: Optional[Iterable[Source]] = None) -> None:
         '''
