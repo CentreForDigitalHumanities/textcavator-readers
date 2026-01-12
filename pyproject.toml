@@ -19,6 +19,7 @@ dependencies = [
   "pandas",
   "requests",
   "rdflib",
+  "pyreadr>=0.5.4",
 ]
 
 description = "Utilities for extracting XML, HTML, CSV, XLSX, and RDF data with a common interface"
