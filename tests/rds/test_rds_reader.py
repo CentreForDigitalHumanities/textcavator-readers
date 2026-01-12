@@ -29,4 +29,9 @@ class HamletReader(RDSReader):
 def test_rds_reader():
     reader = HamletReader()
     docs = list(reader.documents())
-    assert len(docs) == 10
+    assert len(docs) == 11
+    assert docs[1] == {
+        'play': 'Hamlet',
+        'character': 'HAMLET',
+        'line': 'Whither wilt thou lead me? Speak, I\'ll go no further.',
+    }
