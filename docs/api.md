@@ -42,6 +42,12 @@ __Module:__ `ianalyzer_readers.readers.json`
 
 ::: ianalyzer_readers.readers.json
 
+## RDS reader
+
+__Module:__ `ianalyzer_readers.readers.rds`
+
+::: ianalyzer_readers.readers.rds
+
 ## Extractors
 
 __Module:__ `ianalyzer_readers.extract`

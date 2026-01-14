@@ -16,13 +16,13 @@ class RDSReader(Reader):
     Only file sources are supported. Row values can be extracted with the CSV extractor.
     '''
 
-    def data_from_file(self, path) -> Iterable[Dict]:
+    def data_from_file(self, path: str) -> Iterable[Dict]:
         result = pyreadr.read_r(path)
         data: pandas.DataFrame = result['data']
 
         for _, row in data.iterrows():
             yield {index: value for index, value in row.items()}
 
-    def iterate_data(self, data: Iterable[Dict], metadata):
+    def iterate_data(self, data: Iterable[Dict], metadata: Dict):
         for row in data:
             yield {'rows': [row]} # format is for compatability with the CSV extractor
