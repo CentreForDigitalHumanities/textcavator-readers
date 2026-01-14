@@ -619,7 +619,8 @@ class JSON(Extractor):
     When working with nested lists, use JSONReader to unnest.
 
     Parameters:
-        keys (Iterable[str]): the keys with which to retrieve a field value from the source
+        keys (Iterable[str]): the keys with which to retrieve a field value from the
+            source. If empty, this returns the source as-is.
     '''
 
     def __init__(self, *keys, **kwargs):
@@ -627,6 +628,8 @@ class JSON(Extractor):
         super().__init__(**kwargs)
 
     def _apply(self, data: Union[str, dict], key_index: int = 0, **kwargs) -> str:
+        if not len(self.keys):
+            return data
         key = self.keys[key_index]
         data = data.get(key)
         if len(self.keys) > key_index + 1:

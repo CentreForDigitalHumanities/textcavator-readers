@@ -1,4 +1,6 @@
 from tests.json.json_reader import JSONDocumentReader, JSONMultipleDocumentReader
+from ianalyzer_readers.readers.core import Field
+from ianalyzer_readers.extract import JSON
 
 expected = [
     {
@@ -41,3 +43,10 @@ def _assert_matches(target: dict, doc: dict):
     assert len(target.keys()) == len(doc.keys())
     for key in target.keys():
         assert doc.get(key) == target.get(key)
+
+def test_json_no_key():
+    reader = JSONDocumentReader()
+    field = Field('data', extractor=JSON())
+    reader.fields.append(field)
+    doc = next(reader.documents())
+    assert 'TITLE' in doc['data']
