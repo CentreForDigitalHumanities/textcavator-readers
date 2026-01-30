@@ -550,6 +550,19 @@ class XML(Extractor):
             ]
 
 
+class XPath(Extractor):
+    '''
+    Extractor for XML data from the EtreeXMLReader
+    '''
+
+    def __init__(self, xpath: str, **kwargs):
+        super().__init__(**kwargs)
+        self.xpath = xpath
+
+    def _apply(self, element, *nargs, **kwargs):
+        return element.xpath(self.xpath)
+
+
 class CSV(Extractor):
     '''
     This extractor extracts values from a list of CSV or spreadsheet rows.
