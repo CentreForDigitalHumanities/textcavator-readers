@@ -522,7 +522,7 @@ class XML(Extractor):
         else:
             text = '\n\n'.join(node.get_text() for node in soup)
 
-        _softbreak = re.compile('(?<=\S)\n(?=\S)| +')
+        _softbreak = re.compile(r'(?<=\S)\n(?=\S)| +')
         _newlines = re.compile('\n+')
         _tabs = re.compile('\t+')
 
@@ -714,9 +714,18 @@ class RDF(Extractor):
 
 
 class PageText(Extractor):
-    def __init__(self, extract_options: Dict = dict(), **kwargs):
-        self.extract_options = extract_options
+    '''
+    Extracts text from a PDF page object.
+
+    See https://pypdf.readthedocs.io/en/stable/user/extract-text.html
+
+    Parameters:
+        options: these are passed on to `extract_text` (documentation linked above).
+    '''
+
+    def __init__(self, options: Dict = dict(), **kwargs):
+        self.options = options
         super().__init__(**kwargs)
 
     def _apply(self, page: PageObject, **kwargs):
-        return page.extract_text(**self.extract_options)
+        return page.extract_text(**self.options)
