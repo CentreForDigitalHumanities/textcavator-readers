@@ -17,6 +17,7 @@ import bs4
 import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
+from pypdf import PageObject
 
 
 logger = logging.getLogger()
@@ -710,3 +711,12 @@ class RDF(Extractor):
             return node.value
         except:
             return node
+
+
+class PageText(Extractor):
+    def __init__(self, extract_options: Dict = dict(), **kwargs):
+        self.extract_options = extract_options
+        super().__init__(**kwargs)
+
+    def _apply(self, page: PageObject, **kwargs):
+        return page.extract_text(**self.extract_options)
