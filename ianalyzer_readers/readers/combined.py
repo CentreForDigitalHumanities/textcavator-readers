@@ -1,9 +1,14 @@
+'''
+Module for "meta-readers" that combine output from other readers. Currently, this is
+just the `ConcatReader`.
+'''
+
 from typing import List, Type
 from ianalyzer_readers.readers.core import Reader, Source
 
-class CombinedReader(Reader):
+class ConcatReader(Reader):
     '''
-    A CombinedReader returns data from multiple subreaders.
+    A ConcatReader returns data from multiple subreaders.
 
     The combined reader will iterate through each subreader in turn and concatenate the
     documents. For example, you could use this when a portion of your data is provided as

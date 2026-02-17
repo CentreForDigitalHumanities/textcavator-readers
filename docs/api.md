@@ -42,6 +42,13 @@ __Module:__ `ianalyzer_readers.readers.json`
 
 ::: ianalyzer_readers.readers.json
 
+## Combined reader
+
+__Module:__ `ianalyzer_readers.readers.combined`
+
+::: ianalyzer_readers.readers.combined
+
+
 ## Extractors
 
 __Module:__ `ianalyzer_readers.extract`

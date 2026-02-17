@@ -1,11 +1,11 @@
-from ianalyzer_readers.readers.combined import CombinedReader
+from ianalyzer_readers.readers.combined import ConcatReader
 from ianalyzer_readers.readers.core import Field
 
 from tests.json.json_reader import JSONMultipleDocumentReader as JSONShakespeareReader
 from tests.csv.test_csv_reader import ShakespeareReader as CSVShakespeareReader
 
 
-class CombinedShakespeareReader(CombinedReader):
+class CombinedShakespeareReader(ConcatReader):
     reader_classes = [CSVShakespeareReader, JSONShakespeareReader]
     fields = [
         Field(name='play'),
