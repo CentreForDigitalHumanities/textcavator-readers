@@ -1,4 +1,4 @@
-site_name: I-analyzer Readers
+site_name: Textcavator Readers
 repo_url: https://github.com/CentreForDigitalHumanities/ianalyzer-readers
 plugins:
   - mkdocstrings
@@ -12,7 +12,7 @@ nav:
   - 'api.md'
 watch:
   - docs
-  - ianalyzer_readers
+  - textcavator_readers
 plugins:
 - mkdocstrings:
     handlers:

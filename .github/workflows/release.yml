@@ -1,5 +1,5 @@
 
-name: Publish ianalyzer-readers to PyPI
+name: Publish textcavator-readers to PyPI
 
 on: 
   release:
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/ianalyzer_readers 
+      url: https://pypi.org/p/textcavator_readers 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:

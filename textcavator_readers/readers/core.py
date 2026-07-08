@@ -14,7 +14,7 @@ from contextlib import AbstractContextManager, nullcontext
 from requests import Response
 
 logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger('ianalyzer-readers').setLevel(logging.DEBUG)
+logger = logging.getLogger('textcavator-readers').setLevel(logging.DEBUG)
 
 SourceData = Union[str, Response, bytes]
 '''Type definition of the data types a Reader method can handle.'''

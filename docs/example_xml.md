@@ -52,7 +52,7 @@ Since this is an XML dataset, we will base our reader on the `XMLReader`.
 Our reader includes an implementation of `sources`, which will direct the reader to extract all files in `~/data`. This is identical to the [file discovery in the CSV example](./example_csv.md#file-discovery).
 
 ```python
-from ianalyzer_readers.readers.xml import XMLReader
+from textcavator_readers.readers.xml import XMLReader
 import os
 
 class HamletReader(XMLReader):
@@ -112,9 +112,9 @@ To make this more concrete, here are some examples of fields and how they can be
 We can implement these fields as follows.
 
 ```python
-from ianalyzer_readers.core import Field
-from ianalyzer_readers.extract import XML
-from ianalyzer_readers.xml_tag import Tag
+from textcavator_readers.core import Field
+from textcavator_readers.extract import XML
+from textcavator_readers.xml_tag import Tag
 
 class HamletReader(XMLReader):
     # ...
@@ -224,7 +224,7 @@ Each extractor can describe steps to traverse the tree, either from the document
 The `xml_tag` module provides other kinds of tag queries. For instance, say that we want to extract the scene and the act for each line. We can use the `ParentTag` to move *up* in the tree:
 
 ```python
-from ianalyzer_readers.xml_tag import ParentTag
+from textcavator_readers.xml_tag import ParentTag
 
 act = Field(
     name='act',
@@ -248,8 +248,8 @@ See the [XML tags documentation](./api.md#xml-tags) for an overview of all built
 ## Complete example
 
 ```python
-from ianalyzer_readers.readers.xml import XMLReader
-from ianalyzer_readers.xml_tag import Tag, ParentTag
+from textcavator_readers.readers.xml import XMLReader
+from textcavator_readers.xml_tag import Tag, ParentTag
 import os
 
 class HamletReader(XMLReader):
