@@ -21,9 +21,12 @@ numpy==2.3.3
 openpyxl==3.1.5
     # via ianalyzer_readers (setup.py)
 pandas==2.3.3
-    # via ianalyzer_readers (setup.py)
+    # via
+    #   ianalyzer_readers (setup.py)
+    #   pyreadr
 pyparsing==3.2.5
     # via rdflib
+pyreadr==0.5.4
 pypdf==6.7.0
     # via ianalyzer_readers (setup.py)
 python-dateutil==2.9.0.post0

@@ -3,7 +3,7 @@
 [![Python package](https://github.com/CentreForDigitalHumanities/ianalyzer-readers/actions/workflows/python-package.yml/badge.svg)](https://github.com/CentreForDigitalHumanities/ianalyzer-readers/actions/workflows/python-package.yml)
 [![Documentation Status](https://readthedocs.org/projects/ianalyzer-readers/badge/?version=latest)](https://ianalyzer-readers.readthedocs.io/en/latest/?badge=latest)
 
-`ianalyzer-readers` is a python module to extract data from XML, HTML, CSV, JSON, XLSX or RDF (Linked Data) files.
+`ianalyzer-readers` is a python module to extract data from a variety of formats, including CSV, XML, HTML, XLSX, JSON, and RDF.
 
 This module was originally created for [Textcavator](https://github.com/CentreForDigitalHumanities/Textcavator), a web application that extracts data from a variety of datasets, indexes them and presents a search interface. To do this, we wanted a way to extract data from source files without having to write a new script "from scratch" for each dataset, and an API that would work the same regardless of the source file type.
 

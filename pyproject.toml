@@ -19,6 +19,7 @@ dependencies = [
   "pandas",
   "requests",
   "rdflib",
+  "pyreadr>=0.5.4",
   "pypdf",
 ]
 
