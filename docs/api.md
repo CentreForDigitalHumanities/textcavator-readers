@@ -30,6 +30,13 @@ __Module:__ `ianalyzer_readers.readers.html`
 
 ::: ianalyzer_readers.readers.html
 
+## PDF reader
+
+__Module:__ `ianalyzer_readers.readers.pdf`
+
+::: ianalyzer_readers.readers.pdf
+
+
 ## RDF reader
 
 __Module:__ `ianalyzer_readers.readers.rdf`

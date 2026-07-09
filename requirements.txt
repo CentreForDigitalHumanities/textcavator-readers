@@ -27,6 +27,7 @@ pandas==2.3.3
 pyparsing==3.2.5
     # via rdflib
 pyreadr==0.5.4
+pypdf==6.7.0
     # via ianalyzer_readers (setup.py)
 python-dateutil==2.9.0.post0
     # via pandas
