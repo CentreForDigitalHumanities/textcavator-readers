@@ -22,7 +22,7 @@ from pypdf import PageObject
 
 logger = logging.getLogger()
 
-from ianalyzer_readers.xml_tag import TagSpecification, resolve_tag_specification
+from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
 
 
 class Extractor(object):

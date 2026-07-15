@@ -1,9 +1,10 @@
-# I-analyzer Readers
+# Textcavator Readers
 
-[![Python package](https://github.com/CentreForDigitalHumanities/ianalyzer-readers/actions/workflows/python-package.yml/badge.svg)](https://github.com/CentreForDigitalHumanities/ianalyzer-readers/actions/workflows/python-package.yml)
-[![Documentation Status](https://readthedocs.org/projects/ianalyzer-readers/badge/?version=latest)](https://ianalyzer-readers.readthedocs.io/en/latest/?badge=latest)
+[![Python package](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/python-package.yml/badge.svg)](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/python-package.yml)
+[![Documentation Status](https://readthedocs.org/projects/textcavator-readers/badge/?version=latest)](https://textcavator-readers.readthedocs.io/en/latest/?badge=latest)
 
-`ianalyzer-readers` is a python module to extract data from a variety of formats, including CSV, XML, HTML, XLSX, JSON, and RDF.
+
+`textcavator-readers` is a python module to extract data from a variety of formats, including CSV, XML, HTML, XLSX, JSON, and RDF.
 
 This module was originally created for [Textcavator](https://github.com/CentreForDigitalHumanities/Textcavator), a web application that extracts data from a variety of datasets, indexes them and presents a search interface. To do this, we wanted a way to extract data from source files without having to write a new script "from scratch" for each dataset, and an API that would work the same regardless of the source file type.
 
@@ -15,7 +16,7 @@ Requires Python 3.10 or later.
 
 ## Contents
 
-[ianalyzer_readers](./ianalyzer_readers/) contains the source code for the package. [tests](./tests/) contains unit tests.
+[textcavator_readers](./textcavator_readers/) contains the source code for the package. [tests](./tests/) contains unit tests.
 
 ## When to use this package
 
@@ -31,7 +32,7 @@ What we find especially useful is that all subclasses of `Reader` have the same 
 
 Typical usage of this package would be to make a custom Python class for a dataset from which you want to extract a list of documents. We call this a `Reader`. This package provides the base classes to structure readers, and provides extraction utilities for several file types.
 
-For detailed usage documention and examples, visit [ianalyzer-readers.readthedocs.io](https://ianalyzer-readers.readthedocs.io/en/latest/)
+For detailed usage documention and examples, visit [textcavator-readers.readthedocs.io](https://textcavator-readers.readthedocs.io/en/latest/)
 
 If this site is unavailable, you can also generate the documentation site locally; see the [contributing guide](./CONTRIBUTING.md) for insttructions.
 

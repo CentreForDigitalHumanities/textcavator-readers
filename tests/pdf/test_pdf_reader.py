@@ -1,7 +1,7 @@
 import os
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.readers.pdf import PDFReader
-from ianalyzer_readers.extract import Metadata, Order, PageText
+from textcavator_readers.readers.core import Field
+from textcavator_readers.readers.pdf import PDFReader
+from textcavator_readers.extract import Metadata, Order, PageText
 
 class HamletPDFReader(PDFReader):
     data_directory = os.path.join(os.path.dirname(__file__), "data")

@@ -3,7 +3,7 @@ Defines a `PDFReader` which is intended to extract text data from PDFs.
 '''
 
 from pypdf import PdfReader as PyPdfReader
-from ianalyzer_readers.readers.core import Reader
+from textcavator_readers.readers.core import Reader
 
 class PDFReader(Reader):
     '''

@@ -1,10 +1,10 @@
 import os
 import re
 
-from ianalyzer_readers.readers.xml import XMLReader
-from ianalyzer_readers.extract import XML
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.xml_tag import (
+from textcavator_readers.readers.xml import XMLReader
+from textcavator_readers.extract import XML
+from textcavator_readers.readers.core import Field
+from textcavator_readers.xml_tag import (
     Tag, ParentTag, FindParentTag, SiblingTag, CurrentTag, TransformTag
 ) 
 

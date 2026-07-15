@@ -42,7 +42,7 @@ A __reader__ is the Python object that can take a dataset, and process it into d
 
 Readers usually custom-made for a specific dataset. They describe exactly where to find the dataset's files, how those files are structured into documents, what fields of information each document should contain, and how to get that information from the source file.
 
-`ianalyzer_readers` provides base classes that will provide a lot basic functionality, so you don't have to start from scratch for each dataset.
+`textcavator_readers` provides base classes that will provide a lot basic functionality, so you don't have to start from scratch for each dataset.
 
 ### Fields
 
@@ -64,7 +64,7 @@ Extractors may contain _other extractors_. Generic extractors often do: they are
 
 ## Why use this package?
 
-You will generally use `ianalyzer_readers` in places where you might also write a custom Python script to process your dataset. In some situations, that would be appropriate. We'll go over some reasons why `ianalyzer_readers` may be preferable in your situation.
+You will generally use `textcavator_readers` in places where you might also write a custom Python script to process your dataset. In some situations, that would be appropriate. We'll go over some reasons why `textcavator_readers` may be preferable in your situation.
 
 ### All readers have the same API
 
@@ -74,4 +74,4 @@ However, once those readers are done, they will have the same API. For example, 
 
 ### High-level interface
 
-`ianalyzer_readers` uses generic libraries like `csv` and `beautifulsoup4`, but is designed for narrower set of use cases.  That means that if you're trying to do what the library is designed for, it's able to provide a more high-level interface. 
+`textcavator_readers` uses generic libraries like `csv` and `beautifulsoup4`, but is designed for narrower set of use cases.  That means that if you're trying to do what the library is designed for, it's able to provide a more high-level interface. 

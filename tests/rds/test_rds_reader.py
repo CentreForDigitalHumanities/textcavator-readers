@@ -1,8 +1,8 @@
 import os
 
-from ianalyzer_readers.readers.rds import RDSReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import Constant, CSV
+from textcavator_readers.readers.rds import RDSReader
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import Constant, CSV
 
 class HamletReader(RDSReader):
     data_directory = os.path.dirname(__file__) + '/data'

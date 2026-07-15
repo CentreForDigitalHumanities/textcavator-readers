@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ianalyzer_readers"
+name = "textcavator_readers"
 version = "0.4.0"
 authors = [
   {name="Utrecht University, Centre for Digital Humanities - Research Software Lab", email="cdh@uu.nl"}
@@ -23,7 +23,7 @@ dependencies = [
   "pypdf",
 ]
 
-description = "Utilities for extracting XML, HTML, CSV, XLSX, and RDF data with a common interface"
+description = "Utilities for extracting XML, HTML, CSV, and other data types with a common interface"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
@@ -35,19 +35,19 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/CentreForDigitalHumanities/ianalyzer-readers"
-Documentation = "https://ianalyzer-readers.readthedocs.io/"
+Repository = "https://github.com/CentreForDigitalHumanities/textcavator-readers"
+Documentation = "https://textcavator-readers.readthedocs.io/"
 
 [project.optional-dependencies]
 dev = ['pytest', 'mkdocs', 'mkdocstrings-python']
 
 [tool.setuptools]
 packages = [
-  "ianalyzer_readers",
-  "ianalyzer_readers.readers",
+  "textcavator_readers",
+  "textcavator_readers.readers",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = [
-  'ianalyzer_readers'
+  'textcavator_readers'
 ]

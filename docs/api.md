@@ -2,67 +2,67 @@
 
 ## Core classes
 
-__Module:__ `ianalyzer_readers.readers.core`
+__Module:__ `textcavator_readers.readers.core`
 
-::: ianalyzer_readers.readers.core
+::: textcavator_readers.readers.core
 
 ## CSV reader
 
-__Module:__ `ianalyzer_readers.readers.csv`
+__Module:__ `textcavator_readers.readers.csv`
 
-::: ianalyzer_readers.readers.csv
+::: textcavator_readers.readers.csv
 
 ## XLSX reader
 
-__Module:__ `ianalyzer_readers.readers.xlsx`
+__Module:__ `textcavator_readers.readers.xlsx`
 
-::: ianalyzer_readers.readers.xlsx
+::: textcavator_readers.readers.xlsx
 
 ## XML reader
 
-__Module:__ `ianalyzer_readers.readers.xml`
+__Module:__ `textcavator_readers.readers.xml`
 
-::: ianalyzer_readers.readers.xml
+::: textcavator_readers.readers.xml
 
 ## HTML reader
 
-__Module:__ `ianalyzer_readers.readers.html`
+__Module:__ `textcavator_readers.readers.html`
 
-::: ianalyzer_readers.readers.html
+::: textcavator_readers.readers.html
 
 ## PDF reader
 
-__Module:__ `ianalyzer_readers.readers.pdf`
+__Module:__ `textcavator_readers.readers.pdf`
 
-::: ianalyzer_readers.readers.pdf
+::: textcavator_readers.readers.pdf
 
 
 ## RDF reader
 
-__Module:__ `ianalyzer_readers.readers.rdf`
+__Module:__ `textcavator_readers.readers.rdf`
 
-::: ianalyzer_readers.readers.rdf
+::: textcavator_readers.readers.rdf
 
 ## JSON reader
 
-__Module:__ `ianalyzer_readers.readers.json`
+__Module:__ `textcavator_readers.readers.json`
 
-::: ianalyzer_readers.readers.json
+::: textcavator_readers.readers.json
 
 ## RDS reader
 
-__Module:__ `ianalyzer_readers.readers.rds`
+__Module:__ `textcavator_readers.readers.rds`
 
-::: ianalyzer_readers.readers.rds
+::: textcavator_readers.readers.rds
 
 ## Extractors
 
-__Module:__ `ianalyzer_readers.extract`
+__Module:__ `textcavator_readers.extract`
 
-::: ianalyzer_readers.extract
+::: textcavator_readers.extract
 
 ## XML tags
 
-__Module:__ `ianalyzer_readers.xml_tag`
+__Module:__ `textcavator_readers.xml_tag`
 
-::: ianalyzer_readers.xml_tag
+::: textcavator_readers.xml_tag
