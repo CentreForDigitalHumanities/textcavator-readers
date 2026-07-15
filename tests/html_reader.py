@@ -1,9 +1,9 @@
 import os
 
-from ianalyzer_readers.readers.html import HTMLReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import XML
-from ianalyzer_readers.xml_tag import Tag, CurrentTag
+from textcavator_readers.readers.html import HTMLReader
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import XML
+from textcavator_readers.xml_tag import Tag, CurrentTag
 
 here = os.path.abspath(os.path.dirname(__file__))
 

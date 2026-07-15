@@ -1,6 +1,6 @@
 # Custom reader
 
-`ianalyzer_readers` includes several subclasses of `Reader` to handle common data formats, such as the `XMLReader` and `CSVReader`. If you need to handle a new or unique data format, it may be useful to create a new `Reader` subclass. This example demonstrates how you could implement a custom reader.
+`textcavator_readers` includes several subclasses of `Reader` to handle common data formats, such as the `XMLReader` and `CSVReader`. If you need to handle a new or unique data format, it may be useful to create a new `Reader` subclass. This example demonstrates how you could implement a custom reader.
 
 Our dataset is a file `library.txt`, which contains bibliographical data for a collection of books. It looks like this:
 
@@ -25,7 +25,7 @@ Year: 1865
 This data doesn't use a standardised format, but it's consistently structured. We start by creating a reader class:
 
 ```python
-from ianalyzer_readers.readers.core import Reader
+from textcavator_readers.readers.core import Reader
 
 class BibliographyReader(Reader):
     pass
@@ -38,7 +38,7 @@ File discovery is normally implemented when you create the Reader class for a sp
 In this case, our reader is meant to handle a single dataset, so we should describe how to find the data file by implementing `sources()`. This just needs to yield a single file.
 
 ```python
-from ianalyzer_readers.readers.core import Reader
+from textcavator_readers.readers.core import Reader
 
 class BibliographyReader(Reader):
     data_directory = '.'
@@ -91,7 +91,7 @@ In this case, our data provides a few properties for each book: the title, autho
 
 ```python
 from typing import Iterable, Dict, List
-from ianalyzer_readers.core import Document
+from textcavator_readers.core import Document
 
 class BibliographyReader(Reader):
     # ...
@@ -120,7 +120,7 @@ Our extractor also needs to implement a method `_apply()` which specifies how to
 
 ```python
 from typing import Dict
-from ianalyzer_readers.extract import Extractor
+from textcavator_readers.extract import Extractor
 
 class BibliographyExtractor(Extractor):
     def __init__(self, key: str, **kwargs) -> None:
@@ -138,8 +138,8 @@ The last thing that is required for a functioning reader is a list of fields.
 *Note: if you are creating an abstract reader class like `CSVReader`, you should not implement a list of fields.*
 
 ```python
-from ianalyzer_readers.core import Field
-from ianalyzer_readers.extract import Order, Constant
+from textcavator_readers.core import Field
+from textcavator_readers.extract import Order, Constant
 
     fields = [
         Field(
@@ -174,9 +174,9 @@ Note that we can use our custom-made `BibliographyExtractor`, but universal extr
 from typing import Iterable, Dict
 import os
 
-from ianalyzer_readers.extract import Extractor
-from ianalyzer_readers.readers.core import Reader, Document, Field
-from ianalyzer_readers.extract import Order, Constant
+from textcavator_readers.extract import Extractor
+from textcavator_readers.readers.core import Reader, Document, Field
+from textcavator_readers.extract import Order, Constant
 
 
 class BibliographyExtractor(Extractor):

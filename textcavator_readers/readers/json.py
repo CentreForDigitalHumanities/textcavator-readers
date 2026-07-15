@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 from pandas import json_normalize
 
 from .core import Reader
-import ianalyzer_readers.extract as extract
+import textcavator_readers.extract as extract
 
 class JSONReader(Reader):
     '''

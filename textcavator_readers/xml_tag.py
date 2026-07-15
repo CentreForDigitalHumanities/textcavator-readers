@@ -75,10 +75,7 @@ class Tag:
             return bs4.SoupStrainer(name, attrs, string, **kwargs)
         strainer = strainer_helper(*self.args, **self.kwargs)
 
-        for element in pool:
-            result = strainer.search(element)
-            if result:
-                yield result
+        yield from strainer.filter(pool)
 
 
 class CurrentTag(Tag):

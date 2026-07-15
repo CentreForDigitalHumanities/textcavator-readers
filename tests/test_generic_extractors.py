@@ -1,5 +1,5 @@
 import pytest
-from ianalyzer_readers.extract import (
+from textcavator_readers.extract import (
     Constant, Combined, Backup, Choice, Metadata, Pass, Order, Cache
 )
 
