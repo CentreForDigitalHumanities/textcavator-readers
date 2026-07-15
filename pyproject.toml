@@ -44,8 +44,3 @@ packages = [
   "textcavator_readers",
   "textcavator_readers.readers",
 ]
-
-[tool.pytest.ini_options]
-pythonpath = [
-  'textcavator_readers'
-]
