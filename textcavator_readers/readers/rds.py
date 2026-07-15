@@ -18,10 +18,11 @@ class RDSReader(Reader):
 
     def data_from_file(self, path: str) -> Iterable[Dict]:
         result = pyreadr.read_r(path)
-        data: pandas.DataFrame = result['data']
+        for value in result.values():
+            data: pandas.DataFrame = value
 
-        for _, row in data.iterrows():
-            yield {index: value for index, value in row.items()}
+            for _, row in data.iterrows():
+                yield {index: value for index, value in row.items()}
 
     def iterate_data(self, data: Iterable[Dict], metadata: Dict):
         for row in data:
