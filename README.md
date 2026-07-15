@@ -1,6 +1,6 @@
 # Textcavator Readers
 
-[![Python package](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/python-package.yml/badge.svg)](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/release.yml)
+[![Python package](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/release.yml/badge.svg)](https://github.com/CentreForDigitalHumanities/textcavator-readers/actions/workflows/release.yml)
 [![Documentation Status](https://readthedocs.org/projects/textcavator-readers/badge/?version=latest)](https://textcavator-readers.readthedocs.io/en/latest/?badge=latest)
 
 
