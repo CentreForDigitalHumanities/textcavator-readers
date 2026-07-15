@@ -30,6 +30,13 @@ __Module:__ `textcavator_readers.readers.html`
 
 ::: textcavator_readers.readers.html
 
+## PDF reader
+
+__Module:__ `textcavator_readers.readers.pdf`
+
+::: textcavator_readers.readers.pdf
+
+
 ## RDF reader
 
 __Module:__ `textcavator_readers.readers.rdf`
@@ -41,6 +48,12 @@ __Module:__ `textcavator_readers.readers.rdf`
 __Module:__ `textcavator_readers.readers.json`
 
 ::: textcavator_readers.readers.json
+
+## RDS reader
+
+__Module:__ `textcavator_readers.readers.rds`
+
+::: textcavator_readers.readers.rds
 
 ## Extractors
 
