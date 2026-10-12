@@ -66,3 +66,9 @@ __Module:__ `textcavator_readers.extract`
 __Module:__ `textcavator_readers.xml_tag`
 
 ::: textcavator_readers.xml_tag
+
+## XML value extractors
+
+__Module:__ `textcavator_readers.xml_extract`
+
+::: textcavator_readers.xml_extract

@@ -406,13 +406,10 @@ class XML(Extractor):
         extract:
             Controls how selected XML tags are converted to a value. Default is to return
             the string content of the tag. The `xml_extract` module provides utilities
-            for alternative options, but you can also define your own function.
-        flatten:
-            When extracting the text content of a tag, `flatten` determines whether
-            the contents of non-text children are flattened. If `False`, only the direct
-            text content of the tag is extracted.
-            
-            This parameter does nothing if `attribute=True` is set.
+            for alternative options.
+
+            You can also provide a custom function here. It should take one argument, a
+            `bs4.element.Tag` object.
         toplevel:
             If `True`, the extractor will search from the toplevel tag of the XML
             document, rather than the entry tag for the document.
