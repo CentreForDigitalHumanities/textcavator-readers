@@ -4,6 +4,7 @@ from textcavator_readers.readers.html import HTMLReader
 from textcavator_readers.readers.core import Field
 from textcavator_readers.extract import XML
 from textcavator_readers.xml_tag import Tag, CurrentTag
+from textcavator_readers.xml_extract import Flatten
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -34,7 +35,7 @@ class HamletHTMLReader(HTMLReader):
     )
     lines = Field(
         'lines',
-        XML(CurrentTag(), flatten=True),
+        XML(CurrentTag(), extract=Flatten()),
     )
 
     fields = [title, character, lines]
