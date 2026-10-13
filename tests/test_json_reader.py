@@ -1,6 +1,6 @@
 from tests.json.json_reader import JSONDocumentReader, JSONMultipleDocumentReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import JSON
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import JSON
 
 expected = [
     {

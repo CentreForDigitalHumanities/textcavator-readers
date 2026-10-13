@@ -57,7 +57,7 @@ Next, we need to define the fields that should be extracted for each document. T
 
 ```python
 from textcavator_readers.readers.csv import CSVReader
-from ianalyer_readers.readers.core import Field
+from textcavator_readers.readers.core import Field
 from textcavator_readers.extract import CSV, Constant
 import os
 
@@ -227,7 +227,7 @@ At this point, the reader class should look like this:
 
 ```python
 from textcavator_readers.readers.csv import CSVReader
-from ianalyer_readers.readers.core import Field
+from textcavator_readers.readers.core import Field
 from textcavator_readers.extract import CSV, Constant
 import os
 
