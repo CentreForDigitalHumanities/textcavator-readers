@@ -36,7 +36,7 @@ pytz==2025.2
     # via pandas
 rdflib==7.2.1
     # via textcavator_readers (setup.py)
-requests==2.32.5
+requests==2.33.0
     # via textcavator_readers (setup.py)
 six==1.17.0
     # via python-dateutil
