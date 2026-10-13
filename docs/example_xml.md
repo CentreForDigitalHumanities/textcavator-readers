@@ -114,7 +114,7 @@ We can implement these fields as follows.
 ```python
 from textcavator_readers.core import Field
 from textcavator_readers.extract import XML
-from textcavator_readers.xml_tag import Tag
+from textcavator_readers.xml_tag import Tag, Root
 from textcavator_readers.xml_extract import Attribute
 
 
@@ -138,9 +138,9 @@ class HamletReader(XMLReader):
     title = Field(
         'title',
         XML(
+            Root(),
             Tag('meta'),
             Tag('title'),
-            toplevel=True,
         )
     )
 
@@ -150,8 +150,9 @@ class HamletReader(XMLReader):
 
 Notes:
 
-- The extractor will start from the entry tag of the document by default. In the `title` field, we set `toplevel` to start from the top of the XML tree instead.
-- Each extractor gives a number of `Tag` objects. These describe the steps to select the tag(s) you're interested in. In the `character` field, we do not provide any `Tag`s, because we don't need to traverse the tree.
+- Each extractor gives a number of `Tag` objects. These describe the steps to move from the tag representing the document to the tag you're interested in.
+- In the `title` field, we start by moving to the top of the tree with `Root`, and then select metadata tags from there.
+- In the `character` field, we do not provide any `Tag`s, because we don't need to traverse the tree.
 - The `Tag` pattern may return multiple matches. For example, the `lines` field looks for `<l>` child tags, of which there are often multiple. By default, the extractor will only select the first match. In `lines`, we set `multiple=True`, to get a list of all matches.
 - The default method to extract a value from a tag is to take its string content. In the `character` field, the `extract` provides a different callable that will take the `character` attribute instead.
 
@@ -251,7 +252,7 @@ See the [XML tags documentation](./api.md#xml-tags) for an overview of all built
 
 ```python
 from textcavator_readers.readers.xml import XMLReader
-from textcavator_readers.xml_tag import Tag, ParentTag
+from textcavator_readers.xml_tag import Tag, Root, ParentTag
 import os
 
 class HamletReader(XMLReader):
@@ -279,9 +280,9 @@ class HamletReader(XMLReader):
     title = Field(
         'title',
         XML(
+            Root(),
             Tag('meta'),
             Tag('title'),
-            toplevel=True,
         )
     )
     act = Field(
