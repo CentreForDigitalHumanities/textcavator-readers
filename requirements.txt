@@ -14,7 +14,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 idna==3.10
     # via requests
-lxml==6.0.2
+lxml==6.1.0
     # via textcavator_readers (setup.py)
 numpy==2.3.3
     # via pandas
