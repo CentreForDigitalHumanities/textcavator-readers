@@ -4,8 +4,8 @@ Query utilities for traversing JSON trees
 
 from typing import Iterable, Union
 
-
-Path = list[Union[str, int]]
+type PathElement = Union[str, int]
+type Path = list[PathElement]
 
 type JSONPrimitive = Union[str, int, float, bool, None]
 type JSONDict = dict[str, 'JSONDoc']
@@ -18,6 +18,14 @@ def is_primitive(doc: JSONDoc):
         isinstance(doc, float) or \
         isinstance(doc, bool) or \
         doc is None
+
+
+def is_valid_key(doc: JSONDoc, key: PathElement):
+    if isinstance(doc, list):
+        return isinstance(key, int)
+    if isinstance(doc, dict):
+        return isinstance(key, str)
+    return False
 
 
 def get_path(doc: JSONDoc, path: Path, strict=False):
@@ -35,39 +43,21 @@ def get_path(doc: JSONDoc, path: Path, strict=False):
     first = path[0]
     tail = path[1:]
 
-    if isinstance(doc, list):
-        if isinstance(first, int):
-            try:
-                item = doc[first]
-            except IndexError as e:
-                if strict:
-                    raise e
-                else:
-                    return None
-
-            return get_path(item, tail, strict)
+    if not is_valid_key(doc, first):
+        if strict:
+            raise LookupError(f'Invalid key type {type(first)} for f{type(doc)} object')
         else:
-            if strict:
-                raise LookupError(f'Invalid key type {type(first)} for list object')
-            else:
-                return None
+            return None
 
-    if isinstance(doc, dict):
-        if isinstance(first, str):
-            try:
-                item = doc[first]
-            except KeyError as e:
-                if strict:
-                    raise e
-                else:
-                    return None
-
-            return get_path(item, tail, strict)
+    try:
+        item = doc[first]
+    except LookupError as e:
+        if strict:
+            raise e
         else:
-            if strict:
-                raise LookupError(f'Invalid key type {type(first)} for dict object')
-            else:
-                return None
+            return None
+
+    return get_path(item, tail, strict)
 
 
 
