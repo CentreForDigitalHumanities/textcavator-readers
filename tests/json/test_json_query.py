@@ -1,6 +1,6 @@
 import pytest
 from textcavator_readers.json.query import (
-    is_primitive, get_path, Key, Index, Root
+    is_primitive, get_path, Key, Index, Root, StrPath
 )
 
 def test_is_primitive():
@@ -84,3 +84,21 @@ def test_root_step():
         ['foo']
     ))
     assert result == [[]]
+
+path_step_cases = [
+    ({'foo': 'bar'}, [], ['foo'], [['foo']]),
+    (['foo', 'bar'], [], ['foo'], []),
+    ('foo', [], 'foo', []),
+    ({'foo': {'bar': 'baz'}}, ['foo'], ['bar'], [['foo', 'bar']]),
+    ({'foo': {'bar': 'baz'}}, [], ['foo', 'bar'], [['foo', 'bar']]),
+    ({'foo': {'bar': 'baz'}}, [], ['foo.bar'], [['foo', 'bar']]),
+    ({'foo': {'bar': 'baz'}}, ['foo'], ['baz'], []),
+    ({'foo': [{'bar': 'baz'}]}, [], ['foo', 0, 'bar'], [['foo', 0, 'bar']]),
+]
+
+
+@pytest.mark.parametrize('obj,path,subpath,expected', path_step_cases)
+def test_path_step(obj, path, subpath, expected):
+    step = StrPath(*subpath)
+    result = list(step.find_in_tree(obj, path))
+    assert result == expected
