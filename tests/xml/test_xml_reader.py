@@ -5,7 +5,7 @@ import requests
 from textcavator_readers.readers.xml import XMLReader
 from textcavator_readers.readers.core import Field
 from textcavator_readers.extract import XML
-from textcavator_readers.xml_tag import Tag, CurrentTag
+from textcavator_readers.xml_tag import Tag, CurrentTag, Root
 from textcavator_readers.xml_extract import Attribute
 
 class HamletXMLReader(XMLReader):
@@ -28,8 +28,8 @@ class HamletXMLReader(XMLReader):
     title = Field(
         'title',
         XML(
+            Root(),
             Tag('title'),
-            toplevel=True
         )
     )
     character = Field(

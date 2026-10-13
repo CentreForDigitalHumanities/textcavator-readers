@@ -5,7 +5,7 @@ from textcavator_readers.readers.xml import XMLReader
 from textcavator_readers.extract import XML
 from textcavator_readers.readers.core import Field
 from textcavator_readers.xml_tag import (
-    Tag, ParentTag, FindParentTag, SiblingTag, CurrentTag, TransformTag
+    Tag, ParentTag, FindParentTag, SiblingTag, CurrentTag, TransformTag, Root
 ) 
 from textcavator_readers.xml_extract import Attribute, Flatten
 
@@ -165,6 +165,16 @@ def test_xml_find_parent_tag(tmpdir):
     assert_extractor_output(reader, 'V')
 
 
+def test_xml_root(tmpdir):
+    extractor = XML(Root(), Tag('play', recursive=False), extract=Attribute('name'))
+    reader = make_test_reader(extractor, XMLReader.tag_toplevel, Tag('lines'), doc_nested, tmpdir)
+    assert_extractor_output(reader, 'play')
+
+    extractor = XML(Root(), extract=Attribute('name'))
+    reader = make_test_reader(extractor, Tag('play'), Tag('lines'), doc_nested, tmpdir)
+    assert_extractor_output(reader, 'play')
+
+
 def test_xml_multiple_attributes(tmpdir):
     extractor = XML(Tag('lines'), extract=Attribute('character'), multiple=True)
     reader = make_test_reader(extractor, Tag('play'), Tag('scene'), doc_nested, tmpdir)
@@ -228,6 +238,14 @@ def test_xml_toplevel_tag_kwargs(tmpdir):
     toplevel_tag = Tag(name='act', n='III')
     reader = make_test_reader(extractor, toplevel_tag, Tag('lines'), doc_nested, tmpdir)
     assert_extractor_output(reader, 'To be, or not to be, that is the question.')
+
+
+def test_xml_toplevel_tag_root(tmpdir):
+    extractor = XML(Root(), extract=Attribute('n'))
+    toplevel_tag = Tag(name='act', n='III')
+    reader = make_test_reader(extractor, toplevel_tag, Tag('lines'), doc_nested, tmpdir)
+    assert_extractor_output(reader, 'III')
+
 
 def test_xml_toplevel_tag_callable(tmpdir):
     extractor = XML(Tag('l'))
@@ -324,7 +342,7 @@ def test_xml_external_file(tmpdir):
             ),
             Field(
                 name='title',
-                extractor=XML(Tag('title'), toplevel=True)
+                extractor=XML(Root(), Tag('title'))
             )
         ]
     

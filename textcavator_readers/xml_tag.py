@@ -92,6 +92,27 @@ class CurrentTag(Tag):
         return [soup]
 
 
+class Root(Tag):
+    '''
+    A Tag query that will return the root node.
+
+    Primarily useful as first item in a tag sequence, since it does not depend on
+    earlier queries.
+
+    If used in an XMLReaader that specifies `tag_toplevel`, this will return the
+    toplevel tag instead of the original XML root.
+    '''
+
+    def __init__(self):
+        pass
+
+    def find_in_soup(self, soup: bs4.PageElement) -> Iterable[bs4.PageElement]:
+            for parent in soup.parents:
+                if not parent.parent:
+                    return [parent]
+
+
+
 class ParentTag(Tag):
     '''
     A Tag that will select a parent tag based on a fixed level.

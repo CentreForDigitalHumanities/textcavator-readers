@@ -383,9 +383,6 @@ class XML(Extractor):
 
     - Choose whether to use the source file (default), or use an external XML file by
         setting `external_file`.
-    - Choose where to start searching. The default searching point is the entry tag
-        for the document, but you can also start from the top of the document by setting
-        `toplevel`.
     - Describe the tag(s) you're looking for as a Tag object. You can also provide multiple
         tags to chain queries. 
     - If you need to return _all_ matching tags, rather than the first match, set
@@ -411,8 +408,9 @@ class XML(Extractor):
             You can also provide a custom function here. It should take one argument, a
             `bs4.element.Tag` object.
         toplevel:
-            If `True`, the extractor will search from the toplevel tag of the XML
-            document, rather than the entry tag for the document.
+            Deprecated option to start searching from the top of the tree, rather than the
+            entry tag for the document. Replace by starting the `tags` sequence with
+            `Root()`.
         multiple:
             If `False`, the extractor will extract the first matching element. If 
             `True`, it will extract a list of all matching elements.
@@ -436,6 +434,8 @@ class XML(Extractor):
                  ):
 
         self.tags = tags
+        if toplevel:
+            warnings.warn(DeprecationWarning('"toplevel" argument is deprecated; use Root() tag instead'))
         self.toplevel = toplevel
         self.multiple = multiple
         self.external_file = external_file
