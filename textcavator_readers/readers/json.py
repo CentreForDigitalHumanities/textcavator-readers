@@ -1,18 +1,16 @@
 '''
 This module defines the JSONReader.
 
-It can parse documents nested in one file, for which it uses the pandas library,
-or multiple files with one document each, which use the generic Python json parser.
+It can parse documents nested in one file or multiple files with one document each.
+
+Uses the Python base library `json` and the utilities provided in `textcavator_readers.json.query`
 '''
 
 import json
-from typing import List, Optional, Union
-
-from pandas import json_normalize
 
 from .core import Reader
 import textcavator_readers.extract as extract
-from textcavator_readers.json.query import JSONStep, iterate_steps, get_path
+from textcavator_readers.json.query import JSONStep, iterate_steps
 
 class JSONReader(Reader):
     '''
