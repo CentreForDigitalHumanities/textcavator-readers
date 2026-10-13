@@ -62,7 +62,7 @@ def get_path(doc: JSONDoc, path: Path, strict=False):
 
 
 class JSONStep:
-    def find_in_tree(self, path: Path, doc: JSONDoc) -> Iterable[Path]:
+    def find_in_tree(self, doc: JSONDoc, path: Path) -> Iterable[Path]:
         raise NotImplementedError('find_in_tree must be implemented in child classes')
 
 
@@ -70,5 +70,20 @@ class Key(JSONStep):
     def __init__(self, key: str):
         self.key = key
 
-    def find_in_tree(self, path: Path, doc: JSONDoc) -> Iterable[Path]:
-        return super().find_in_tree(path, doc)
+    def find_in_tree(self, doc: JSONDoc, path: Path) -> Iterable[Path]:
+        item = get_path(doc, path, strict=True)
+        if isinstance(item, dict):
+            if self.key in item:
+                yield [*path, self.key]
+
+
+class Index(JSONStep):
+    def __init__(self, index: int):
+        self.index = index
+
+    def find_in_tree(self, doc: JSONDoc, path: Path) -> Iterable[Path]:
+        item = get_path(doc, path, strict=True)
+        if isinstance(item, list):
+            if len(item) > self.index:
+                yield [*path, self.index]
+

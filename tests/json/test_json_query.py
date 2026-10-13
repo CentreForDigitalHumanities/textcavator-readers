@@ -1,6 +1,6 @@
 import pytest
 from textcavator_readers.json.query import (
-    is_primitive, get_path
+    is_primitive, get_path, Key, Index
 )
 
 def test_is_primitive():
@@ -41,3 +41,35 @@ def test_get_path(obj, path, expected, invalid):
             get_path(obj, path, strict=True)
     else:
         get_path(obj, path, strict=True)
+
+
+key_step_cases = [
+    ({'foo': 'bar'}, [], 'foo', [['foo']]),
+    (['foo', 'bar'], [], 'foo', []),
+    ('foo', [], 'foo', []),
+    ({'foo': {'bar': 'baz'}}, ['foo'], 'bar', [['foo', 'bar']]),
+    ({'foo': {'bar': 'baz'}}, ['foo'], 'baz', []),
+    ({'foo': [{'bar': 'baz'}]}, ['foo', 0], 'bar', [['foo', 0, 'bar']]),
+]
+
+@pytest.mark.parametrize('obj,path,key,expected', key_step_cases)
+def test_key_step(obj, path, key, expected):
+    step = Key(key)
+    result = list(step.find_in_tree(obj, path))
+    assert result == expected
+
+
+index_step_cases = [
+    (['foo', 'bar'], [], 0, [[0]]),
+    (['foo', 'bar'], [], 1, [[1]]),
+    (['foo', 'bar'], [], 2, []),
+    ('foo', [], 0, []),
+    ({'foo': 'bar'}, [], 0, []),
+    ({'foo': ['bar', 'baz']}, ['foo'], 0, [['foo', 0]]),
+]
+
+@pytest.mark.parametrize('obj,path,index,expected', index_step_cases)
+def test_index_step(obj, path, index, expected):
+    step = Index(index)
+    result = list(step.find_in_tree(obj, path))
+    assert result == expected
