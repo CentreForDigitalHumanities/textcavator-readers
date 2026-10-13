@@ -182,3 +182,24 @@ class Values(JSONStep):
         elif isinstance(item, dict):
             for key in item:
                 yield [*path, key]
+
+
+class MultiValue(JSONStep):
+    '''
+    Iterates items if the object is a list; otherwise stays at the current path.
+
+    This can be used for properties that may or may not have multiple values, and where
+    single values are not always wrapped in an array.
+    
+    If the value at the given path is a list, this will iterate over the values, but if it
+    is a dictionary or a primitive, it will return the current path as-is.
+    '''
+
+    def find_in_tree(self, doc, path):
+        item = get_path(doc, path, strict=True)
+        if isinstance(item, list):
+            for i in range(len(item)):
+                yield [*path, i]
+        else:
+            yield path
+
