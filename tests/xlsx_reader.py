@@ -1,6 +1,6 @@
-from ianalyzer_readers.readers.xlsx import XLSXReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import CSV
+from textcavator_readers.readers.xlsx import XLSXReader
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import CSV
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))

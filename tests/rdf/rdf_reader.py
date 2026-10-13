@@ -4,9 +4,9 @@ import os
 from rdflib import Graph, URIRef, Literal
 from rdflib.namespace import RDF
 
-from ianalyzer_readers.readers.rdf import get_uri_value, RDFReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import RDF as RDFExtractor
+from textcavator_readers.readers.rdf import get_uri_value, RDFReader
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import RDF as RDFExtractor
 
 here = os.path.abspath(os.path.dirname(__file__))
 

@@ -3,9 +3,9 @@ import json
 import os
 from typing import Union
 
-from ianalyzer_readers.extract import JSON
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.readers.json import JSONReader
+from textcavator_readers.extract import JSON
+from textcavator_readers.readers.core import Field
+from textcavator_readers.readers.json import JSONReader
 
 
 def merge_lines(lines: Union[list, str]) -> str:
