@@ -164,9 +164,12 @@ class Parent(JSONStep):
     Get the parent of the current element.
     '''
 
+    def __init__(self, level: int = 1):
+        self.level = level
+
     def find_in_tree(self, doc, path):
-        if len(path):
-            yield path[:-1]
+        if len(path) >= self.level:
+            yield path[:-self.level]
         else:
             raise LookupError('Cannot get parent from root path')
 

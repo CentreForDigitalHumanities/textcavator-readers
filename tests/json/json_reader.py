@@ -6,7 +6,7 @@ from typing import Union
 from textcavator_readers.extract import JSON
 from textcavator_readers.readers.core import Field
 from textcavator_readers.readers.json import JSONReader
-from textcavator_readers.json.query import Key, Values, Root, Path
+from textcavator_readers.json.query import Key, Values, Root, Path, Parent
 
 def merge_lines(lines: Union[list, str]) -> str:
     if isinstance(lines, list):
@@ -59,9 +59,9 @@ class JSONMultipleDocumentReader(JSONReader):
             yield filename
 
     act = Field("act", JSON(Root(), Key("TITLE")))
-    scene = Field("scene", JSON(Root(), Path("SCENE.TITLE")))
+    scene = Field("scene", JSON(Parent(2), Key("TITLE")))
     character = Field("character", JSON(Key("SPEAKER")))
     lines = Field("lines", JSON(Key("LINE"), transform=merge_lines))
-    stage_dir = Field("stage_direction", JSON(Root(), Path("SCENE.STAGEDIR"), transform=merge_lines))
+    stage_dir = Field("stage_direction", JSON(Parent(2), Key("STAGEDIR"), transform=merge_lines))
 
     fields = [act, scene, character, lines, stage_dir]
