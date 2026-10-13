@@ -1,6 +1,6 @@
 import pytest
 from textcavator_readers.json.query import (
-    is_primitive, get_path, Key, Index
+    is_primitive, get_path, Key, Index, Root
 )
 
 def test_is_primitive():
@@ -75,3 +75,12 @@ def test_index_step(obj, path, index, expected):
     step = Index(index)
     result = list(step.find_in_tree(obj, path))
     assert result == expected
+
+
+def test_root_step():
+    step = Root()
+    result = list(step.find_in_tree(
+        {'foo': {'bar': 'baz'}},
+        ['foo']
+    ))
+    assert result == [[]]

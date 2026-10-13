@@ -91,3 +91,7 @@ class Index(JSONStep):
             if 0 <= index < len(item):
                 yield [*path, index]
 
+
+class Root(JSONStep):
+    def find_in_tree(self, doc, path):
+        return [[]]
