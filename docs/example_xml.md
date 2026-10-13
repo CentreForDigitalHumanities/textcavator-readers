@@ -115,6 +115,8 @@ We can implement these fields as follows.
 from textcavator_readers.core import Field
 from textcavator_readers.extract import XML
 from textcavator_readers.xml_tag import Tag
+from textcavator_readers.xml_extract import Attribute
+
 
 class HamletReader(XMLReader):
     # ...
@@ -130,7 +132,7 @@ class HamletReader(XMLReader):
         'character',
         XML(
             # no tags to traverse here
-            attribute='character',
+            extract=Attribute('character'),
         )
     )
     title = Field(
@@ -151,7 +153,7 @@ Notes:
 - The extractor will start from the entry tag of the document by default. In the `title` field, we set `toplevel` to start from the top of the XML tree instead.
 - Each extractor gives a number of `Tag` objects. These describe the steps to select the tag(s) you're interested in. In the `character` field, we do not provide any `Tag`s, because we don't need to traverse the tree.
 - The `Tag` pattern may return multiple matches. For example, the `lines` field looks for `<l>` child tags, of which there are often multiple. By default, the extractor will only select the first match. In `lines`, we set `multiple=True`, to get a list of all matches.
-- The default method to extract a value from a tag is to take its string content. In the `character` field, the `attribute` argument states that we want to take the `character` attribute instead.
+- The default method to extract a value from a tag is to take its string content. In the `character` field, the `extract` provides a different callable that will take the `character` attribute instead.
 
 <details>
 
@@ -230,7 +232,7 @@ act = Field(
     name='act',
     extractor=XML(
         ParentTag(2),
-        attribute="n"
+        extract=Attribute('n'),
     ),
 )
 
@@ -238,7 +240,7 @@ scene = Field(
     name='scene',
     extractor=XML(
         ParentTag(1),
-        attribute="n"
+        extract=Attribute('n'),
     ),
 )
 ```
@@ -271,7 +273,7 @@ class HamletReader(XMLReader):
         'character',
         XML(
             # no tags to traverse here
-            attribute='character',
+            extract=Attribute('character'),
         )
     )
     title = Field(
@@ -286,14 +288,14 @@ class HamletReader(XMLReader):
         name='act',
         extractor=XML(
             ParentTag(2),
-            attribute="n"
+            extract=Attribute('n'),
         ),
     )
     scene = Field(
         name='scene',
         extractor=XML(
             ParentTag(1),
-            attribute="n"
+            extract=Attribute('n'),
         ),
     )
 
