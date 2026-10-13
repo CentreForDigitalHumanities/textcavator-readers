@@ -60,6 +60,15 @@ def get_path(doc: JSONDoc, path: PathSpec, strict=False):
     return get_path(item, tail, strict)
 
 
+def iterate_steps(doc: JSONDoc, path: PathSpec, steps: list[JSONStep]):
+    if len(steps):
+        next = steps[0]
+        rest = steps[1:]
+        for subpath in next.find_in_tree(doc, path):
+            yield from iterate_steps(doc, subpath, rest)
+    else:
+        yield doc, path
+
 
 class JSONStep:
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:

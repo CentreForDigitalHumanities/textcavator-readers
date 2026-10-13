@@ -32,6 +32,7 @@ def test_json_parse_multiple_documents():
     '''test that JSON reader can parse multiple documents from an array in a single file'''
     reader = JSONMultipleDocumentReader()
     docs = list(reader.documents())
+    print(docs)
     assert len(docs) == len(expected)
     _assert_matches(expected[0], docs[0])
     _assert_matches(expected[-1], docs[-1])

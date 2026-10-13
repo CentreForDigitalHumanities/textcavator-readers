@@ -12,25 +12,26 @@ from pandas import json_normalize
 
 from .core import Reader
 import textcavator_readers.extract as extract
+from textcavator_readers.json.query import JSONStep, iterate_steps, get_path
 
 class JSONReader(Reader):
     '''
     A base class for Readers of JSON encoded data.
 
-    The reader can either be used on a collection of JSON files (`single_document=True`), in which each file represents a document,
-    or for a JSON file containing lists of documents.
-
-    If the attributes `record_path` and `meta` are set, they are used as arguments to [pandas.json_normalize](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.json_normalize.html) to unnest the JSON data.
+    The reader can either be used on a collection of JSON files in which each file
+    represents a document, or for a JSON file containing lists of documents.
 
     Attributes:
-        single_document: indicates whether the data is organized such that a file represents a single document
-        record_path: a path or list of paths by which a list of documents can be extracted from a large JSON file; irrelevant if `single_document = True`
-        meta: a list of paths, or list of lists of paths, by which metadata common for all documents can be located; irrelevant if `single_document = True`
+        record_path: List of JSONStep objects that specifies the path to document entry
+            points within each file. Default is `[]`, meaning the whole file
+            represents a single document.
     """
 
     Examples:
         ### Multiple documents in one file:
         ```python
+        from textcavator_readers.json.query import Key, Root, Values
+
         example_data = {
             'path': {
                 'sketch': 'Hungarian Phrasebook',
@@ -46,21 +47,14 @@ class JSONReader(Reader):
         }
 
         MyJSONReader(JSONReader):
-            record_path = ['path', 'to', 'records']
-            meta = [['path', 'sketch'], ['path', 'episode']]
+            record_path = [Key('path'), Key('to'), Key('records'), Values()]
 
-            speech = Field('speech', JSON('speech'))
-            character = Field('character', JSON('character'))
-            sketch = Field('sketch', JSON('path.sketch'))
-            episode = Field('episode', JSON('path.episode'))
-        ```
-        To define the paths used to extract the field values, consider the dataformat the `pandas.json_normalize` creates:
-        a table with each row representing a document, and columns corresponding to paths, either relative to documents within `record_path`,
-        or relative to the top level (`meta`), with list of paths indicated by dots.
-        ```csv
-        row,speech,character,path.sketch,path.episode
-        0,"I will not buy this record. It is scratched.","tourist","Hungarian Phrasebook",25
-        1,"No sir. This is a tobacconist's.","tobacconist","Hungarian Phrasebook",25
+            speech = Field('speech', JSON(Key('speech')))
+            character = Field('character', JSON(Key('character')))
+            sketch = Field('sketch', JSON(Root(), Key('path'), Key('sketch')))
+            episode = Field('episode', JSON(Root(), Key('path'), Key('episode')))
+            
+            fields = [speech, character, sketch, episode]
         ```
 
         ### Single document per file:
@@ -75,32 +69,21 @@ class JSONReader(Reader):
         }
 
         MyJSONReader(JSONReader):
-            single_document = True
+            speech = Field('speech', JSON(Key('scene'), Key('speech')))
+            character = Field('character', JSON(Key('scene'), Key('character')))
+            sketch = Field('sketch', JSON(Key('sketch')))
+            episode = Field('episode', JSON(Key('episode')))
 
-            speech = Field('speech', JSON('scene', 'speech'))
-            character = Field('character', JSON('scene', 'character))
-            sketch = Field('sketch', JSON('sketch'))
-            episode = Field('episode', JSON('episode))
+            fields = [speech, character, sketch, episode]
+
         ```
 
     '''
 
-    single_document: bool = False
+    record_path: list[JSONStep] = list()
     '''
-    set to `True` if the data is structured such that one document is encoded in one .json file
-    in that case, the reader assumes that there are no lists in such a file
-    '''
-
-    record_path: Optional[List[str]] = None
-    '''
-    a keyword or list of keywords by which a list of documents can be extracted from a large JSON file.
-    Only relevant if `single_document=False`.
-    '''
-
-    meta: Optional[List[Union[str, List[str]]]] = None
-    '''
-    a list of keywords, or list of lists of keywords, by which metadata for each document can be located,
-    if it is in a different path than `record_path`. Only relevant if `single_document=False`.
+    A list of steps to retrieve document entry points from the full JSON data. If
+    left blank, the full object will represent a single document.
     '''
 
     def validate(self):
@@ -108,15 +91,11 @@ class JSONReader(Reader):
 
 
     def iterate_data(self, data, metadata):
-        if not self.single_document:
-            documents = json_normalize(
-                data, record_path=self.record_path, meta=self.meta
-            ).to_dict('records')
-        else:
-            documents = [data]
-
-        for doc in documents:
-            yield {'data': doc}
+        for record, path in iterate_steps(data, [], self.record_path):
+            yield {
+                'json': record,
+                'doc_path': path,
+            }
 
 
     def data_from_file(self, path):
