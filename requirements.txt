@@ -26,7 +26,7 @@ pandas==2.3.3
     #   textcavator_readers (setup.py)
 pyparsing==3.2.5
     # via rdflib
-pypdf==6.7.0
+pypdf==6.19.0
     # via textcavator_readers (setup.py)
 pyreadr==0.5.4
     # via textcavator_readers (setup.py)
