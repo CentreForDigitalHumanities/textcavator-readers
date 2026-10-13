@@ -1,7 +1,7 @@
 import pytest
 from textcavator_readers.json.query import (
     is_primitive, get_path, Key, Index, Root, Path, Filter, Values, MultiValue,
-    iterate_steps
+    iterate_steps, Parent
 )
 
 def test_is_primitive():
@@ -125,6 +125,11 @@ def test_multivalue():
     step = MultiValue()
     assert list(step.find_in_tree({'foo': 'bar'}, ['foo'])) == [['foo']]
     assert list(step.find_in_tree({'foo': ['bar', 'baz']}, ['foo'])) == [['foo', 0], ['foo', 1]]
+
+
+def test_parent():
+    step = Parent()
+    assert list(step.find_in_tree({'foo': {'bar': 'baz'}}, ['foo', 'bar'])) == [['foo']]
 
 
 def test_iterate_steps():

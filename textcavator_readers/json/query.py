@@ -159,6 +159,18 @@ class Root(JSONStep):
         return [[]]
 
 
+class Parent(JSONStep):
+    '''
+    Get the parent of the current element.
+    '''
+
+    def find_in_tree(self, doc, path):
+        if len(path):
+            yield path[:-1]
+        else:
+            raise LookupError('Cannot get parent from root path')
+
+
 class Filter(JSONStep):
     '''
     Used to filter the results of the query up to this point by a custom function.
