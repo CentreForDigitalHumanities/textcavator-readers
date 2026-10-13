@@ -1,6 +1,6 @@
 import pytest
 from textcavator_readers.json.query import (
-    is_primitive, get_path, Key, Index, Root, StrPath
+    is_primitive, get_path, Key, Index, Root, Path, Filter, Values
 )
 
 def test_is_primitive():
@@ -99,6 +99,22 @@ path_step_cases = [
 
 @pytest.mark.parametrize('obj,path,subpath,expected', path_step_cases)
 def test_path_step(obj, path, subpath, expected):
-    step = StrPath(*subpath)
+    step = Path(*subpath)
     result = list(step.find_in_tree(obj, path))
     assert result == expected
+
+
+def test_filter_step():
+    doc = {'foo': {'bar': 'baz'}}
+    func = lambda obj: isinstance(obj, dict)
+    step = Filter(func)
+    assert list(step.find_in_tree(doc, ['foo'])) == [['foo']]
+    assert list(step.find_in_tree(doc, ['foo', 'bar'])) == []
+
+
+def test_values_step():
+    step = Values()
+    assert list(step.find_in_tree(['foo', 'bar'], [])) == [[0], [1]]
+    assert list(step.find_in_tree({'foo': 1, 'bar': 2}, [])) == [['foo'], ['bar']]
+    assert list(step.find_in_tree('foo', [])) == []
+    assert list(step.find_in_tree({'foo': ['bar', 'baz']}, ['foo'])) == [['foo', 0], ['foo', 1]]

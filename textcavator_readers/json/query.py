@@ -2,7 +2,7 @@
 Query utilities for traversing JSON trees
 '''
 
-from typing import Iterable, Union
+from typing import Iterable, Union, Callable
 
 type PathElement = Union[str, int]
 type PathSpec = list[PathElement]
@@ -148,3 +148,37 @@ class Root(JSONStep):
     
     def find_in_tree(self, doc, path):
         return [[]]
+
+
+class Filter(JSONStep):
+    '''
+    Used to filter the results of the query up to this point by a custom function.
+
+    Parameters:
+        func: A callable that returns False (or any falsy value) for objects that should
+            be omitted.
+    '''
+
+    def __init__(self, func: Callable):
+        self.func = func
+
+
+    def find_in_tree(self, doc, path):
+        item = get_path(doc, path, strict=True)
+        if self.func(item):
+            yield path
+
+
+class Values(JSONStep):
+    '''
+    Used to get all values from a dictionary or list object.
+    '''
+
+    def find_in_tree(self, doc, path):
+        item = get_path(doc, path, strict=True)
+        if isinstance(item, list):
+            for i in range(len(item)):
+                yield [*path, i]
+        elif isinstance(item, dict):
+            for key in item:
+                yield [*path, key]
