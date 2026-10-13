@@ -215,11 +215,7 @@ class Reader:
             A tuple with the parsed source data, and the metadata (empty if none was
                 provided).
         '''
-        if isinstance(source, tuple) and len(source) == 2:
-            source_data, metadata = source
-        else:
-            source_data = source
-            metadata = {}
+        source_data, metadata = self._split_metadata(source)
 
         if isinstance(source_data, str):
             if not isfile(source_data):
@@ -233,6 +229,14 @@ class Reader:
             raise TypeError(f'Unknown source type: {type(source_data)}')
 
         return data, metadata
+
+
+    def _split_metadata(self, source: Source) -> Tuple[SourceData, Dict]:
+        '''Splits a source into the (unparsed) source object and metadata'''
+        if isinstance(source, tuple) and len(source) == 2:
+            return source
+        else:
+            return source, {}
 
 
     def data_from_file(self, path: str) -> Any:
