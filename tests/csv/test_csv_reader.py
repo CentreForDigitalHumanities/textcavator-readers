@@ -1,6 +1,6 @@
-from ianalyzer_readers.readers.csv import CSVReader
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import CSV, Metadata
+from textcavator_readers.readers.csv import CSVReader
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import CSV, Metadata
 import os
 
 def format_name(name):

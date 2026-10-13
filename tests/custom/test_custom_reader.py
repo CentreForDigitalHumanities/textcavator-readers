@@ -5,9 +5,9 @@ This module tests the code in the "custom reader" example in the documentation.
 from typing import Iterable, Dict, Optional
 import os
 
-from ianalyzer_readers.extract import Extractor
-from ianalyzer_readers.readers.core import Reader, Document, Field
-from ianalyzer_readers.extract import Order, Constant
+from textcavator_readers.extract import Extractor
+from textcavator_readers.readers.core import Reader, Document, Field
+from textcavator_readers.extract import Order, Constant
 
 
 class BibliographyExtractor(Extractor):

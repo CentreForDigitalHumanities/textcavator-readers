@@ -1,7 +1,7 @@
 import pytest
 from rdflib import URIRef
 
-from tests.rdf.rdf_reader import TestRDFReader, get_uri_value
+from .rdf_reader import TestRDFReader, get_uri_value
 
 target_documents = [
     {

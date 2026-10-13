@@ -4,7 +4,7 @@ just the `ConcatReader`.
 '''
 
 from typing import List, Type
-from ianalyzer_readers.readers.core import Reader, Source
+from textcavator_readers.readers.core import Reader, Source
 
 class ConcatReader(Reader):
     '''

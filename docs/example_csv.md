@@ -24,7 +24,7 @@ act,scene,character,line
 Since this data is encoded as CSV, we can use the `CSVReader` as a base class for our reader:
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 
 class HamletReader(CSVReader):
     pass
@@ -35,7 +35,7 @@ class HamletReader(CSVReader):
 Before we can use the `HamletReader`, some additional attributes must be implemented. First, we need to implement `data_directory` and `sources`.
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 import os
 
 class HamletReader(CSVReader):
@@ -56,9 +56,9 @@ Note that `sources()` includes some assumptions about the contents of the direct
 Next, we need to define the fields that should be extracted for each document. The original CSV provides each line in the play, and lists the act, scene, character and the text of the line. We want to extract all those values. For good measure, we will also include the name of the play as a constant value.
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 from ianalyer_readers.readers.core import Field
-from ianalyzer_readers.extract import CSV, Constant
+from textcavator_readers.extract import CSV, Constant
 import os
 
 class HamletReader(CSVReader):
@@ -226,9 +226,9 @@ We add `multiple=True` to select all lines, and add a `transform` argument to th
 At this point, the reader class should look like this:
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 from ianalyer_readers.readers.core import Field
-from ianalyzer_readers.extract import CSV, Constant
+from textcavator_readers.extract import CSV, Constant
 import os
 
 def format_name(name):
@@ -339,7 +339,7 @@ Let's say we add some more files in `~/data`, named `Othello.csv`, `The Tragedy 
 Our `sources()` function was already written to yield every file in the data directory, which is what we want. However, the way our CSV files are structured, we will need to find the name of the play at this stage, because it won't be available as a column in the CSV.
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 # ...
 import os
 
@@ -370,9 +370,9 @@ play = Field(
 So we end up with the following reader:
 
 ```python
-from ianalyzer_readers.readers.csv import CSVReader
+from textcavator_readers.readers.csv import CSVReader
 from ianalyer_readers.readers.core import Field
-from ianalyzer_readers.extract import CSV, Metadata
+from textcavator_readers.extract import CSV, Metadata
 import os
 
 def format_name(name):

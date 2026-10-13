@@ -10,9 +10,9 @@ from typing import Iterable, Union, Dict
 from rdflib import BNode, Graph, Literal, URIRef
 
 from .core import Reader, Document
-import ianalyzer_readers.extract as extract
+import textcavator_readers.extract as extract
 
-logger = logging.getLogger('ianalyzer-readers')
+logger = logging.getLogger('textcavator-readers')
 
 
 class RDFReader(Reader):
