@@ -19,11 +19,11 @@ For example, you could work with a dataset where you have one dataset that provi
 For this scenario, we provide the `ConcatReader` class. After you have created a reader for each portion of your data, you can create a `ConcatReader`, which will concatenate their outputs. This will look something like this:
 
 ```python
-from ianalyzer_readers.readers.xml import XMLReader
-from ianalyzer_readers.readers.csv import CSVReader
-from ianalyzer_readers.readers.combined import ConcatReader
-from ianalyzer_readers.readers.core import Fields
-from ianalyzer_readers.extract import XML, CSV
+from textcavator_readers.readers.xml import XMLReader
+from textcavator_readers.readers.csv import CSVReader
+from textcavator_readers.readers.combined import ConcatReader
+from textcavator_readers.readers.core import Fields
+from textcavator_readers.extract import XML, CSV
 
 class MyXMLReader(XMLReader):
     # reader implementation...
@@ -68,11 +68,11 @@ At present, we do not provide a helper class for this, but the logic to combine 
 Here is an example of what this might look like:
 
 ```python
-from ianalyzer_readers.readers.xml import XMLReader
-from ianalyzer_readers.readers.csv import CSVReader
-from ianalyzer_readers.readers.core import Fields
-from ianalyzer_readers.extract import XML, CSV
-from ianalyzer_readers.xml_tag import Tag, CurrentTag
+from textcavator_readers.readers.xml import XMLReader
+from textcavator_readers.readers.csv import CSVReader
+from textcavator_readers.readers.core import Fields
+from textcavator_readers.extract import XML, CSV
+from textcavator_readers.xml_tag import Tag, CurrentTag
 
 class IndexReader(CSVReader):
     def sources(self, **kwargs):
@@ -113,8 +113,8 @@ In this scenario, you want to iterate through one dataset, but cross-reference i
 If the data is not too large, it can work to gather all author data up front (with a specialised reader) and keep it in memory. In the `sources` implementation for your books reader, include the author data in the metadata for each object, with author IDs as keys. Then a field can extract author data like so:
 
 ```python
-from ianalyzer_readers.readers.core import Field
-from ianalyzer_readers.extract import Combined, XML, Metadata
+from textcavator_readers.readers.core import Field
+from textcavator_readers.extract import Combined, XML, Metadata
 
 Field(
     'author_name',

@@ -57,9 +57,9 @@ __Module:__ `textcavator_readers.readers.rds`
 
 ## Combined reader
 
-__Module:__ `ianalyzer_readers.readers.combined`
+__Module:__ `textcavator_readers.readers.combined`
 
-::: ianalyzer_readers.readers.combined
+::: textcavator_readers.readers.combined
 
 
 ## Extractors
