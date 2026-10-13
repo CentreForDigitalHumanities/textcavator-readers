@@ -81,9 +81,10 @@ class XMLReader(Reader):
 
         # iterate through entries
         top_tag = resolve_tag_specification(self.__class__.tag_toplevel, metadata)
-        bowl = top_tag.find_next_in_soup(data)
+        top_tag_result = top_tag.find_next_in_soup(data)
 
-        if bowl:
+        if top_tag_result:
+            bowl = top_tag_result.extract()
             entry_tag = resolve_tag_specification(self.__class__.tag_entry, metadata)
             spoonfuls = entry_tag.find_in_soup(bowl)
             for spoon in spoonfuls:
