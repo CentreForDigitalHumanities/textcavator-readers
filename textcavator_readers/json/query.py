@@ -84,6 +84,10 @@ class Index(JSONStep):
     def find_in_tree(self, doc: JSONDoc, path: Path) -> Iterable[Path]:
         item = get_path(doc, path, strict=True)
         if isinstance(item, list):
-            if len(item) > self.index:
-                yield [*path, self.index]
+            if self.index < 0:
+                index = len(item) + self.index
+            else:
+                index = self.index
+            if 0 <= index < len(item):
+                yield [*path, index]
 
