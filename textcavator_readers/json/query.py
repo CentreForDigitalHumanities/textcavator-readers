@@ -67,6 +67,13 @@ class JSONStep:
 
 
 class Key(JSONStep):
+    '''
+    Get a specific key from a dictionary object.
+
+    Parameters:
+        key: The key to retrieve.
+    '''
+    
     def __init__(self, key: str):
         self.key = key
 
@@ -78,6 +85,13 @@ class Key(JSONStep):
 
 
 class Index(JSONStep):
+    '''
+    Get an index from an array object.
+
+    Parameters:
+        index: The index to retrieve. Negative indices are also valid.
+    '''
+    
     def __init__(self, index: int):
         self.index = index
 
@@ -94,12 +108,12 @@ class Index(JSONStep):
 
 class Path(JSONStep):
     '''
-    Specify a single, non-recursive path. Useful for shorter notations.
-
+    Specify a single, non-recursive path to retrieve from a nested object. Useful for
+    shorter notations.
 
     Parameters:
-        path: Path within the JSON as one or more strings (will be applied in sequence).
-            Strings can also be dot-separated to denote a sequence.
+        path: Path within the JSON. If you specify multiple arguments, they are applied
+            in sequence. String argumentss can also be dot-separated to denote a sequence.
 
     Limitation: integer keys in dot-separated strings are not parsed as array indices.
     For example, `Path('foo.0.bar')` would not work if `0` is meant to index an array. In
@@ -126,5 +140,11 @@ class Path(JSONStep):
 
 
 class Root(JSONStep):
+    '''
+    Get the root of the JSON document.
+
+    Generally, this should only be used as the first step in a sequence.
+    '''
+    
     def find_in_tree(self, doc, path):
         return [[]]
