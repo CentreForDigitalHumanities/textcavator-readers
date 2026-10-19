@@ -138,20 +138,57 @@ class Key(JSONStep):
     '''
     Get a specific key from a dictionary object.
 
+
     Parameters:
         key: The key to retrieve.
+        recursive: If `True`, the JSON document is search recursively to find the
+            dictionary key within nested lists/dictionaries.
+    
+    
+    If `recursive`, the object is searched recursively for any matching key. This can be
+    more robust and compact, but can increase processing times and return false positives,
+    so use with caution.
+    
+    If the key is nested within itself, only the top key is returned. Consider the
+    following example:
+
+    ```python
+    {'foo': {'bar': {'bar': 'baz'}}
+    ```
+
+    Here:
+    - `Key('bar')` would find nothing.
+    - `Key('bar', recursive=True)` would find the path `['foo', 'bar']` but not
+        `['foo', 'bar', 'bar']`.
+
     '''
     
-    def __init__(self, key: str, **kwargs):
+    def __init__(self, key: str, recursive: bool = False, **kwargs):
         self.key = key
+        self.recursive = recursive
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
-        obj = get_path(doc, path)
-        if isinstance(obj, dict):
-            if self.key in obj:
-                yield [*path, self.key]
+    def find_in_tree(self, doc: JSONDoc, base_path: PathSpec) -> Iterable[PathSpec]:
+        obj = get_path(doc, base_path)
+        subpaths = self._search(obj, recursive=self.recursive)
+        yield from ([*base_path, *path] for path in subpaths)
+
+
+    def _search(self, doc: JSONDoc, recursive=False):
+        if isinstance(doc, dict):
+            for key, value in doc.items():
+                if key == self.key:
+                    yield [key]
+                elif recursive:
+                    for subpath in self._search(value, recursive):
+                        yield [key, *subpath]
+
+        if isinstance(doc, list) and recursive:
+            for i, item in enumerate(doc):
+                for subpath in self._search(item, recursive):
+                    yield [i, *subpath]
+            
 
 
 class Index(JSONStep):

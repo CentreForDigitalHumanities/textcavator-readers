@@ -60,6 +60,23 @@ def test_key_step(obj, path, key, expected):
     assert result == expected
 
 
+recursive_key_cases = [
+    ({'foo': 'bar'}, [['foo']]),
+    ({'bar': {'foo': 'baz'}}, [['bar', 'foo']]),
+    ({'bar': {'bar': 'baz'}}, []),
+    ({'bar': [{'foo': 'baz'}]}, [['bar', 0, 'foo']]),
+    ({'bar': {'foo': 'baz'}, 'baz': {'foo': 'bar'}}, [['bar', 'foo'], ['baz', 'foo']]),
+    ({'bar': [{'foo': 'baz'}, {'foo': 'bar'}]}, [['bar', 0, 'foo'], ['bar', 1, 'foo']]),
+    ({'bar': {'foo': {'foo': 'baz'}}}, [['bar', 'foo']]),
+]
+
+@pytest.mark.parametrize('obj,expected', recursive_key_cases)
+def test_key_step_recursive(obj, expected):
+    step = Key('foo', recursive=True)
+    result = list(step.iterate(obj, []))
+    assert result == expected
+
+
 index_step_cases = [
     (['foo', 'bar'], [], 0, [[0]]),
     (['foo', 'bar'], [], 1, [[1]]),
