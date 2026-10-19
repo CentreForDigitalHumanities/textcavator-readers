@@ -276,6 +276,29 @@ class Parent(JSONStep):
             raise LookupError('Cannot get parent from root path')
 
 
+
+class ParentKey(JSONStep):
+    '''
+    Get an ancestor specified by a specific dictionary key.
+
+    Parameters:
+        key: The dict key to which the path should move up.
+    '''
+
+    def __init__(self, key: str, **kwargs):
+        self.key = key
+        super().__init__(**kwargs)
+
+
+    def find_in_tree(self, doc, path):
+        if self.key in path:
+            index = len(path) - next(i for i, value in enumerate(reversed(path)) if value == self.key)
+            yield path[:index]
+        else:
+            raise LookupError(f'Key "{self.key}" not found in current path')
+
+
+
 class Values(JSONStep):
     '''
     Used to get all values from a dictionary or list object.
