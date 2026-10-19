@@ -4,8 +4,8 @@ Query utilities for traversing JSON trees
 
 from typing import Iterable, Union, Callable, Optional
 
-type PathElement = Union[str, int]
-type PathSpec = list[PathElement]
+type JSONPathElement = Union[str, int]
+type JSONPath = list[JSONPathElement]
 
 type JSONPrimitive = Union[str, int, float, bool, None]
 type JSONDict = dict[str, 'JSONDoc']
@@ -20,7 +20,7 @@ def is_primitive(doc: JSONDoc):
         doc is None
 
 
-def is_valid_key(doc: JSONDoc, key: PathElement):
+def is_valid_key(doc: JSONDoc, key: JSONPathElement):
     if isinstance(doc, list):
         return isinstance(key, int)
     if isinstance(doc, dict):
@@ -28,11 +28,11 @@ def is_valid_key(doc: JSONDoc, key: PathElement):
     return False
 
 
-def get_path(doc: JSONDoc, path: PathSpec, strict: bool = True):
+def get_path(doc: JSONDoc, path: JSONPath, strict: bool = True):
     '''
     Get the specified path from a JSON document.
 
-    Unlike the `JSONStep`-based queries, this is a straightforward lookup.
+    Unlike the `JSONQuery`-based queries, this is a straightforward lookup.
 
     Parameters:
         doc: The JSON document. This can also be a JSON-compatible primitive value (like
@@ -75,7 +75,7 @@ def get_path(doc: JSONDoc, path: PathSpec, strict: bool = True):
     return get_path(item, tail, strict)
 
 
-def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]) -> Iterable[PathSpec]:
+def iterate_steps(doc: JSONDoc, base_path: JSONPath, steps: list[JSONQuery]) -> Iterable[JSONPath]:
     '''
     Iterate through a JSON document based on the specified base path and query steps.
 
@@ -106,7 +106,7 @@ def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]) -> I
         yield base_path
 
 
-class JSONStep:
+class JSONQuery:
     '''
     Parent class for JSON query step constructors.
 
@@ -120,11 +120,11 @@ class JSONStep:
         self.filter = filter
 
 
-    def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
+    def find_in_tree(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
         raise NotImplementedError('find_in_tree must be implemented in child classes')
 
 
-    def iterate(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
+    def iterate(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
         results = self.find_in_tree(doc, path)
         if self.filter:
             for path in results:
@@ -135,7 +135,7 @@ class JSONStep:
             yield from results
 
 
-class Key(JSONStep):
+class Key(JSONQuery):
     '''
     Get a specific key from a dictionary object.
 
@@ -170,7 +170,7 @@ class Key(JSONStep):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc: JSONDoc, base_path: PathSpec) -> Iterable[PathSpec]:
+    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
         obj = get_path(doc, base_path)
         subpaths = self._search(obj, recursive=self.recursive)
         yield from ([*base_path, *path] for path in subpaths)
@@ -192,7 +192,7 @@ class Key(JSONStep):
             
 
 
-class Index(JSONStep):
+class Index(JSONQuery):
     '''
     Get an index from an array object.
 
@@ -204,7 +204,7 @@ class Index(JSONStep):
         self.index = index
         super().__init__(**kwargs)
 
-    def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
+    def find_in_tree(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
         obj = get_path(doc, path)
         if isinstance(obj, list):
             if self.index < 0:
@@ -215,7 +215,7 @@ class Index(JSONStep):
                 yield [*path, index]
 
 
-class Path(JSONStep):
+class Path(JSONQuery):
     '''
     Specify a single, non-recursive path to retrieve from a nested object. Useful for
     shorter notations.
@@ -234,7 +234,7 @@ class Path(JSONStep):
         super().__init__(**kwargs)
 
 
-    def _parse_path(self, path: list[str | int]) -> PathSpec:
+    def _parse_path(self, path: list[str | int]) -> JSONPath:
         parse_element = lambda step: \
             step.split('.') if isinstance(step, str) else [step]
         return [step for subpath in path for step in parse_element(subpath)]
@@ -249,7 +249,7 @@ class Path(JSONStep):
         yield [*path, *self.path]
 
 
-class Root(JSONStep):
+class Root(JSONQuery):
     '''
     Get the root of the JSON document.
 
@@ -260,7 +260,7 @@ class Root(JSONStep):
         return [[]]
 
 
-class Parent(JSONStep):
+class Parent(JSONQuery):
     '''
     Get the parent of the current element.
 
@@ -289,7 +289,7 @@ class Parent(JSONStep):
 
 
 
-class ParentKey(JSONStep):
+class ParentKey(JSONQuery):
     '''
     Get an ancestor specified by a specific dictionary key.
 
@@ -314,7 +314,7 @@ class ParentKey(JSONStep):
 
 
 
-class Values(JSONStep):
+class Values(JSONQuery):
     '''
     Used to get all values from a dictionary or list object.
     '''

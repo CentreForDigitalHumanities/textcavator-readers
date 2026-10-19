@@ -10,7 +10,7 @@ import json
 
 from .core import Reader
 import textcavator_readers.extract as extract
-from textcavator_readers.json_utils import JSONStep, iterate_steps
+from textcavator_readers.json_utils import JSONQuery, iterate_steps
 
 class JSONReader(Reader):
     '''
@@ -20,7 +20,7 @@ class JSONReader(Reader):
     represents a document, or for a JSON file containing lists of documents.
 
     Attributes:
-        record_path: List of JSONStep objects that specifies the path to document entry
+        record_path: List of JSONQuery objects that specifies the path to document entry
             points within each file. Default is `[]`, meaning the whole file
             represents a single document.
     """
@@ -78,7 +78,7 @@ class JSONReader(Reader):
 
     '''
 
-    record_path: list[JSONStep] = list()
+    record_path: list[JSONQuery] = list()
     '''
     A list of steps to retrieve document entry points from the full JSON data. If
     left blank, the full object will represent a single document.

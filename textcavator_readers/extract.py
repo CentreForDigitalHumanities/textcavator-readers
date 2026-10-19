@@ -23,7 +23,7 @@ from pypdf import PageObject
 logger = logging.getLogger()
 
 from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
-from textcavator_readers.json_utils import JSONStep, JSONDoc, PathSpec, iterate_steps, get_path
+from textcavator_readers.json_utils import JSONQuery, JSONDoc, JSONPath, iterate_steps, get_path
 
 
 class Extractor(object):
@@ -622,12 +622,12 @@ class JSON(Extractor):
         steps: Path through the JSON data from 
     '''
 
-    def __init__(self, *steps: JSONStep, multiple=False, **kwargs):
+    def __init__(self, *steps: JSONQuery, multiple=False, **kwargs):
         self.steps = list(steps)
         self.multiple = multiple
         super().__init__(**kwargs)
 
-    def _apply(self, json: JSONDoc, doc_path: PathSpec, **kwargs) -> str:
+    def _apply(self, json: JSONDoc, doc_path: JSONPath, **kwargs) -> str:
         results = iterate_steps(json, doc_path, self.steps)
         if self.multiple:
             return [
