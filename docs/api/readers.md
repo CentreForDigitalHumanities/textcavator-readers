@@ -1,10 +1,4 @@
-# API documentation
-
-## Core classes
-
-__Module:__ `textcavator_readers.readers.core`
-
-::: textcavator_readers.readers.core
+# Readers
 
 ## CSV reader
 
@@ -54,15 +48,3 @@ __Module:__ `textcavator_readers.readers.json`
 __Module:__ `textcavator_readers.readers.rds`
 
 ::: textcavator_readers.readers.rds
-
-## Extractors
-
-__Module:__ `textcavator_readers.extract`
-
-::: textcavator_readers.extract
-
-## XML tags
-
-__Module:__ `textcavator_readers.xml_tag`
-
-::: textcavator_readers.xml_tag

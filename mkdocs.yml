@@ -10,7 +10,10 @@ nav:
     - 'example_xml.md'
     - 'example_custom.md'
   - API:
-    - 'api.md'
+    - 'api/core.md'
+    - 'api/readers.md'
+    - 'api/extractors.md'
+    - 'api/utilities.md'
 theme:
   name: readthedocs
 extra_css:
