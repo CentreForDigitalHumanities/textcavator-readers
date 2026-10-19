@@ -630,7 +630,7 @@ class JSON(Extractor):
     def _apply(self, json: JSONDoc, doc_path: PathSpec, **kwargs) -> str:
         if self.multiple:
             return [
-                get_path(record, path, True)
+                get_path(record, path)
                 for record, path in
                 iterate_steps(json, doc_path, self.steps)
             ]
@@ -639,7 +639,7 @@ class JSON(Extractor):
                 doc, path = next(iterate_steps(json, doc_path, self.steps))
             except StopIteration:
                 return None
-            return get_path(doc, path, True)
+            return get_path(doc, path)
 
 
 class RDF(Extractor):

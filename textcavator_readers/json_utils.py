@@ -28,7 +28,25 @@ def is_valid_key(doc: JSONDoc, key: PathElement):
     return False
 
 
-def get_path(doc: JSONDoc, path: PathSpec, strict=False):
+def get_path(doc: JSONDoc, path: PathSpec, strict: bool = True):
+    '''
+    Get the specified path from a JSON document.
+
+    Unlike the `JSONStep`-based queries, this is a straightforward lookup.
+
+    Parameters:
+        doc: The JSON document. This can also be a JSON-compatible primitive value (like
+            an int).
+        path: The path as a sequence of indices from top to bottom. Indices must be
+            string (for dictionaries) or integer (for lists).
+        strict: If `True`, this will raise an exception if the path is not valid. If
+            `False`, invalid paths return `None`.
+    
+    Raises:
+        LookupError: Raised if `strict` is `True` and the path is not valid. This may
+            also be an inherited `IndexError` or `KeyError`, if the exception is due to
+            an invalid index for a list or dict (respectively).
+    '''
     if not len(path):
         return doc
 
@@ -89,7 +107,7 @@ class JSONStep:
         results = self.find_in_tree(doc, path)
         if self.filter:
             for path in results:
-                obj = get_path(doc, path, True)
+                obj = get_path(doc, path)
                 if self.filter(obj):
                     yield path
         else:
@@ -110,9 +128,9 @@ class Key(JSONStep):
 
 
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
-        item = get_path(doc, path, strict=True)
-        if isinstance(item, dict):
-            if self.key in item:
+        obj = get_path(doc, path)
+        if isinstance(obj, dict):
+            if self.key in obj:
                 yield [*path, self.key]
 
 
@@ -129,13 +147,13 @@ class Index(JSONStep):
         super().__init__(**kwargs)
 
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
-        item = get_path(doc, path, strict=True)
-        if isinstance(item, list):
+        obj = get_path(doc, path)
+        if isinstance(obj, list):
             if self.index < 0:
-                index = len(item) + self.index
+                index = len(obj) + self.index
             else:
                 index = self.index
-            if 0 <= index < len(item):
+            if 0 <= index < len(obj):
                 yield [*path, index]
 
 
@@ -165,9 +183,9 @@ class Path(JSONStep):
 
 
     def find_in_tree(self, doc, path):
-        item = get_path(doc, path, strict=True)
+        obj = get_path(doc, path)
         try:
-            get_path(item, self.path, strict=True)
+            get_path(obj, self.path)
         except LookupError:
             return []
         yield [*path, *self.path]
@@ -207,12 +225,12 @@ class Values(JSONStep):
     '''
 
     def find_in_tree(self, doc, path):
-        item = get_path(doc, path, strict=True)
-        if isinstance(item, list):
-            for i in range(len(item)):
+        obj = get_path(doc, path)
+        if isinstance(obj, list):
+            for i in range(len(obj)):
                 yield [*path, i]
-        elif isinstance(item, dict):
-            for key in item:
+        elif isinstance(obj, dict):
+            for key in obj:
                 yield [*path, key]
 
 
@@ -228,9 +246,9 @@ class MultiValue(JSONStep):
     '''
 
     def find_in_tree(self, doc, path):
-        item = get_path(doc, path, strict=True)
-        if isinstance(item, list):
-            for i in range(len(item)):
+        obj = get_path(doc, path)
+        if isinstance(obj, list):
+            for i in range(len(obj)):
                 yield [*path, i]
         else:
             yield path

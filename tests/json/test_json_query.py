@@ -36,7 +36,7 @@ path_cases = [
 
 @pytest.mark.parametrize('obj,path,expected,invalid', path_cases)
 def test_get_path(obj, path, expected, invalid):
-    assert get_path(obj, path) == expected
+    assert get_path(obj, path, strict=False) == expected
     if invalid:
         with pytest.raises(LookupError):
             get_path(obj, path, strict=True)
