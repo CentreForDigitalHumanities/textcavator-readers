@@ -10,6 +10,10 @@ nav:
     - 'example_xml.md'
     - 'example_custom.md'
   - 'api.md'
+theme:
+  name: readthedocs
+extra_css:
+  - style.css
 watch:
   - docs
   - textcavator_readers
