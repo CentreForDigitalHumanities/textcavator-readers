@@ -80,7 +80,7 @@ def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]) -> I
     Iterate through a JSON document based on the specified base path and query steps.
 
     This will:
-    
+
     - Navigate to the `base_path` within the document.
     - Resolve the first query step in `steps` (if there is one).
     - Recursively apply the remaining `steps` (if there are any).
@@ -327,24 +327,3 @@ class Values(JSONStep):
         elif isinstance(obj, dict):
             for key in obj:
                 yield [*path, key]
-
-
-class MultiValue(JSONStep):
-    '''
-    Iterates items if the object is a list; otherwise stays at the current path.
-
-    This can be used for properties that may or may not have multiple values, and where
-    single values are not always wrapped in an array.
-    
-    If the value at the given path is a list, this will iterate over the values, but if it
-    is a dictionary or a primitive, it will return the current path as-is.
-    '''
-
-    def find_in_tree(self, doc, path):
-        obj = get_path(doc, path)
-        if isinstance(obj, list):
-            for i in range(len(obj)):
-                yield [*path, i]
-        else:
-            yield path
-
