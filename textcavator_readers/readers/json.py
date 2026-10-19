@@ -89,9 +89,9 @@ class JSONReader(Reader):
 
 
     def iterate_data(self, data, metadata):
-        for record, path in iterate_steps(data, [], self.record_path):
+        for path in iterate_steps(data, [], self.record_path):
             yield {
-                'json': record,
+                'json': data,
                 'doc_path': path,
             }
 

@@ -75,7 +75,7 @@ def get_path(doc: JSONDoc, path: PathSpec, strict: bool = True):
     return get_path(item, tail, strict)
 
 
-def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]):
+def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]) -> Iterable[PathSpec]:
     '''
     Iterate through a JSON document based on the specified base path and query steps.
 
@@ -87,9 +87,13 @@ def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]):
 
     Parameters:
         doc: The JSON document.
-        base_path: The initial path through the document (possibly empty). This should be
-            an already resolved path.
-        steps: Query steps to resolve from `base_path`.
+        base_path: The initial path through the document. This should be an already
+            resolved path. If empty, querying will be done from the document root.
+        steps: Query steps to resolve from `base_path`. Can be empty to return only
+            the base path as-is.
+    
+    Returns:
+        A generator with resolved paths.
     '''
 
     if len(steps):
@@ -98,7 +102,7 @@ def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]):
         for subpath in next.iterate(doc, base_path):
             yield from iterate_steps(doc, subpath, rest)
     else:
-        yield doc, base_path
+        yield base_path
 
 
 class JSONStep:

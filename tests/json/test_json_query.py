@@ -145,7 +145,7 @@ def test_iterate_steps():
         ]
     }
     assert list(iterate_steps(doc, [], steps)) == [
-        (doc, ['foo', 0, 'bar']),
-        (doc, ['foo', 1, 'bar']),
-        (doc, ['foo', 2, 'bar']),
+        ['foo', 0, 'bar'],
+        ['foo', 1, 'bar'],
+        ['foo', 2, 'bar'],
     ]
