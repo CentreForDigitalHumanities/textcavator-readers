@@ -9,7 +9,8 @@ nav:
     - 'example_csv.md'
     - 'example_xml.md'
     - 'example_custom.md'
-  - 'api.md'
+  - API:
+    - 'api.md'
 theme:
   name: readthedocs
 extra_css:
