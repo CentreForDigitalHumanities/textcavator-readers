@@ -29,16 +29,13 @@ def is_valid_key(doc: JSONDoc, key: PathElement):
 
 
 def get_path(doc: JSONDoc, path: PathSpec, strict=False):
-    if is_primitive(doc):
-        if len(path):
-            if strict:
-                raise LookupError(f'Cannot use key "{path[0]}" on primitive value "{doc}"')
-            return None
-        else:
-            return doc
-
     if not len(path):
         return doc
+
+    if is_primitive(doc):
+        if strict:
+            raise LookupError(f'Cannot use key "{path[0]}" on primitive value "{doc}"')
+        return None
 
     first = path[0]
     tail = path[1:]
