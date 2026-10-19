@@ -114,23 +114,24 @@ class JSONQuery:
         filter: Optional function to filter the results of the current query.
             This function will receive each resulting object as input and should return
             a boolean; if `True`, the path to the object will be included in the output.
+
     '''
     
     def __init__(self, filter: Optional[Callable] = None):
         self.filter = filter
 
 
-    def find_in_tree(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
+    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
         raise NotImplementedError('find_in_tree must be implemented in child classes')
 
 
-    def iterate(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
-        results = self.find_in_tree(doc, path)
+    def iterate(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+        results = self.find_in_tree(doc, base_path)
         if self.filter:
-            for path in results:
-                obj = get_path(doc, path)
+            for base_path in results:
+                obj = get_path(doc, base_path)
                 if self.filter(obj):
-                    yield path
+                    yield base_path
         else:
             yield from results
 
@@ -204,15 +205,15 @@ class Index(JSONQuery):
         self.index = index
         super().__init__(**kwargs)
 
-    def find_in_tree(self, doc: JSONDoc, path: JSONPath) -> Iterable[JSONPath]:
-        obj = get_path(doc, path)
+    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+        obj = get_path(doc, base_path)
         if isinstance(obj, list):
             if self.index < 0:
                 index = len(obj) + self.index
             else:
                 index = self.index
             if 0 <= index < len(obj):
-                yield [*path, index]
+                yield [*base_path, index]
 
 
 class Path(JSONQuery):
@@ -240,13 +241,13 @@ class Path(JSONQuery):
         return [step for subpath in path for step in parse_element(subpath)]
 
 
-    def find_in_tree(self, doc, path):
-        obj = get_path(doc, path)
+    def find_in_tree(self, doc, base_path):
+        obj = get_path(doc, base_path)
         try:
             get_path(obj, self.path)
         except LookupError:
             return []
-        yield [*path, *self.path]
+        yield [*base_path, *self.path]
 
 
 class Root(JSONQuery):
@@ -256,7 +257,7 @@ class Root(JSONQuery):
     Generally, this should only be used as the first step in a sequence.
     '''
     
-    def find_in_tree(self, doc, path):
+    def find_in_tree(self, doc, base_path):
         return [[]]
 
 
@@ -281,9 +282,9 @@ class Parent(JSONQuery):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc, path):
-        if len(path) >= self.level:
-            yield path[:-self.level]
+    def find_in_tree(self, doc, base_path):
+        if len(base_path) >= self.level:
+            yield base_path[:-self.level]
         else:
             raise LookupError('Cannot get parent from root path')
 
@@ -305,10 +306,10 @@ class ParentKey(JSONQuery):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc, path):
-        if self.key in path:
-            index = len(path) - next(i for i, value in enumerate(reversed(path)) if value == self.key)
-            yield path[:index]
+    def find_in_tree(self, doc, base_path):
+        if self.key in base_path:
+            index = len(base_path) - next(i for i, value in enumerate(reversed(base_path)) if value == self.key)
+            yield base_path[:index]
         else:
             raise LookupError(f'Key "{self.key}" not found in current path')
 
@@ -319,11 +320,11 @@ class Values(JSONQuery):
     Used to get all values from a dictionary or list object.
     '''
 
-    def find_in_tree(self, doc, path):
-        obj = get_path(doc, path)
+    def find_in_tree(self, doc, base_path):
+        obj = get_path(doc, base_path)
         if isinstance(obj, list):
             for i in range(len(obj)):
-                yield [*path, i]
+                yield [*base_path, i]
         elif isinstance(obj, dict):
             for key in obj:
-                yield [*path, key]
+                yield [*base_path, key]
