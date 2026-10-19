@@ -2,7 +2,7 @@
 Query utilities for traversing JSON trees
 '''
 
-from typing import Iterable, Union, Callable, Optional
+from typing import Iterable, Union, Callable, Optional, Any
 
 type JSONPathElement = Union[str, int]
 type JSONPath = list[JSONPathElement]
@@ -127,11 +127,14 @@ class JSONQuery:
 
         This should be implemented on child classes.
 
+        Note for implementation: The input provides the full JSON document for powerful
+        searching. To get the object at the `base_path`, use `get_path()`.
+
         Parameters:
             doc: The full JSON document to query.
             base_path: Path to the entry point within `doc` from which the query should
                 start.
-        
+
         Returns:
             An iterable of resolved paths matching the query. Will be empty if nothing
             matches.
@@ -188,6 +191,7 @@ class Key(JSONQuery):
         key: The key to retrieve.
         recursive: If `True`, the JSON document is search recursively to find the
             dictionary key within nested lists/dictionaries.
+        kwargs: Named arguments to pass on to `JSONQuery` constructor.
     
     
     If `recursive`, the object is searched recursively for any matching key. This can be
@@ -208,7 +212,7 @@ class Key(JSONQuery):
 
     '''
     
-    def __init__(self, key: str, recursive: bool = False, **kwargs):
+    def __init__(self, key: str, recursive: bool = False, **kwargs: Any):
         self.key = key
         self.recursive = recursive
         super().__init__(**kwargs)
@@ -242,9 +246,10 @@ class Index(JSONQuery):
 
     Parameters:
         index: The index to retrieve. Negative indices are also valid.
+        kwargs: Named arguments to pass on to `JSONQuery` constructor.
     '''
     
-    def __init__(self, index: int, **kwargs):
+    def __init__(self, index: int, **kwargs: Any):
         self.index = index
         super().__init__(**kwargs)
 
@@ -267,13 +272,14 @@ class Path(JSONQuery):
     Parameters:
         path: Path within the JSON. If you specify multiple arguments, they are applied
             in sequence. String argumentss can also be dot-separated to denote a sequence.
+        kwargs: Named arguments to pass on to `JSONQuery` constructor.
 
     Limitation: integer keys in dot-separated strings are not parsed as array indices.
     For example, `Path('foo.0.bar')` would not work if `0` is meant to index an array. In
     that case, use `Path('foo', 0, 'bar')`. This may be added later.
     '''
 
-    def __init__(self, *path: str | int, **kwargs):
+    def __init__(self, *path: str | int, **kwargs: Any):
         self.path = self._parse_path(path)
         super().__init__(**kwargs)
 
@@ -313,14 +319,15 @@ class Parent(JSONQuery):
 
     Parameters:
         level: Specify the number of steps to move up in the path.
-    
+        kwargs: Named arguments to pass on to `JSONQuery` constructor.
+
         
     Raises:
         LookupError: Raised if the specified level exceeds the number of steps in the
             path.
     '''
 
-    def __init__(self, level: int = 1, **kwargs):
+    def __init__(self, level: int = 1, **kwargs: Any):
         self.level = level
         super().__init__(**kwargs)
 
@@ -337,14 +344,18 @@ class ParentKey(JSONQuery):
     '''
     Get an ancestor specified by a specific dictionary key.
 
+    Will find the *last* occurrence of the key within the path (i.e. the closest
+    to the current location).
+
     Parameters:
         key: The dict key to which the path should move up.
+        kwargs: Named arguments to pass on to `JSONQuery` constructor.
 
     Raises:
         LookupError: Raised if the specified key does not occur in the path.
     '''
 
-    def __init__(self, key: str, **kwargs):
+    def __init__(self, key: str, **kwargs: Any):
         self.key = key
         super().__init__(**kwargs)
 
