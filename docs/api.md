@@ -66,3 +66,9 @@ __Module:__ `textcavator_readers.extract`
 __Module:__ `textcavator_readers.xml_tag`
 
 ::: textcavator_readers.xml_tag
+
+## JSON utilities
+
+__Module:__ `textcavator_readers.json_utils`
+
+::: textcavator_readers.json_utils

@@ -80,6 +80,7 @@ def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]) -> I
     Iterate through a JSON document based on the specified base path and query steps.
 
     This will:
+    
     - Navigate to the `base_path` within the document.
     - Resolve the first query step in `steps` (if there is one).
     - Recursively apply the remaining `steps` (if there are any).
@@ -262,6 +263,17 @@ class Root(JSONStep):
 class Parent(JSONStep):
     '''
     Get the parent of the current element.
+
+    Use `level` to move up more than one step. Each dictionary or list index in the path
+    constitutes a single level.
+
+    Parameters:
+        level: Specify the number of steps to move up in the path.
+    
+        
+    Raises:
+        LookupError: Raised if the specified level exceeds the number of steps in the
+            path.
     '''
 
     def __init__(self, level: int = 1, **kwargs):
@@ -283,6 +295,9 @@ class ParentKey(JSONStep):
 
     Parameters:
         key: The dict key to which the path should move up.
+
+    Raises:
+        LookupError: Raised if the specified key does not occur in the path.
     '''
 
     def __init__(self, key: str, **kwargs):
