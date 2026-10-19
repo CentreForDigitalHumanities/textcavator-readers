@@ -1,6 +1,6 @@
 import pytest
 from textcavator_readers.json_utils import (
-    is_primitive, get_path, Key, Index, Root, Path, Filter, Values, MultiValue,
+    is_primitive, get_path, Key, Index, Root, Path, Values, MultiValue,
     iterate_steps, Parent
 )
 
@@ -108,9 +108,12 @@ def test_path_step(obj, path, subpath, expected):
 def test_filter_step():
     doc = {'foo': {'bar': 'baz'}}
     func = lambda obj: isinstance(obj, dict)
-    step = Filter(func)
-    assert list(step.find_in_tree(doc, ['foo'])) == [['foo']]
-    assert list(step.find_in_tree(doc, ['foo', 'bar'])) == []
+
+    step = Key('foo', filter=func)
+    assert list(step.iterate(doc, [])) == [['foo']]
+
+    step = Key('bar', filter=func)
+    assert list(step.iterate(doc, ['foo'])) == []
 
 
 def test_values_step():

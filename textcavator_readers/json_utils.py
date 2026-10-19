@@ -2,7 +2,7 @@
 Query utilities for traversing JSON trees
 '''
 
-from typing import Iterable, Union, Callable
+from typing import Iterable, Union, Callable, Optional
 
 type PathElement = Union[str, int]
 type PathSpec = list[PathElement]
@@ -64,15 +64,39 @@ def iterate_steps(doc: JSONDoc, path: PathSpec, steps: list[JSONStep]):
     if len(steps):
         next = steps[0]
         rest = steps[1:]
-        for subpath in next.find_in_tree(doc, path):
+        for subpath in next.iterate(doc, path):
             yield from iterate_steps(doc, subpath, rest)
     else:
         yield doc, path
 
 
 class JSONStep:
+    '''
+    Parent class for JSON step constructors.
+
+    Parameters:
+        filter: Optional function to filter the results of the current query.
+            This function will receive each resulting object as input and should return
+            a boolean; if `True`, the path to the object will be included in the output.
+    '''
+    
+    def __init__(self, filter: Optional[Callable] = None):
+        self.filter = filter
+
+
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
         raise NotImplementedError('find_in_tree must be implemented in child classes')
+
+
+    def iterate(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
+        results = self.find_in_tree(doc, path)
+        if self.filter:
+            for path in results:
+                obj = get_path(doc, path, True)
+                if self.filter(obj):
+                    yield path
+        else:
+            yield from results
 
 
 class Key(JSONStep):
@@ -83,8 +107,10 @@ class Key(JSONStep):
         key: The key to retrieve.
     '''
     
-    def __init__(self, key: str):
+    def __init__(self, key: str, **kwargs):
         self.key = key
+        super().__init__(**kwargs)
+
 
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
         item = get_path(doc, path, strict=True)
@@ -101,8 +127,9 @@ class Index(JSONStep):
         index: The index to retrieve. Negative indices are also valid.
     '''
     
-    def __init__(self, index: int):
+    def __init__(self, index: int, **kwargs):
         self.index = index
+        super().__init__(**kwargs)
 
     def find_in_tree(self, doc: JSONDoc, path: PathSpec) -> Iterable[PathSpec]:
         item = get_path(doc, path, strict=True)
@@ -129,8 +156,9 @@ class Path(JSONStep):
     that case, use `Path('foo', 0, 'bar')`. This may be added later.
     '''
 
-    def __init__(self, *path: str | int):
+    def __init__(self, *path: str | int, **kwargs):
         self.path = self._parse_path(path)
+        super().__init__(**kwargs)
 
 
     def _parse_path(self, path: list[str | int]) -> PathSpec:
@@ -164,33 +192,16 @@ class Parent(JSONStep):
     Get the parent of the current element.
     '''
 
-    def __init__(self, level: int = 1):
+    def __init__(self, level: int = 1, **kwargs):
         self.level = level
+        super().__init__(**kwargs)
+
 
     def find_in_tree(self, doc, path):
         if len(path) >= self.level:
             yield path[:-self.level]
         else:
             raise LookupError('Cannot get parent from root path')
-
-
-class Filter(JSONStep):
-    '''
-    Used to filter the results of the query up to this point by a custom function.
-
-    Parameters:
-        func: A callable that returns False (or any falsy value) for objects that should
-            be omitted.
-    '''
-
-    def __init__(self, func: Callable):
-        self.func = func
-
-
-    def find_in_tree(self, doc, path):
-        item = get_path(doc, path, strict=True)
-        if self.func(item):
-            yield path
 
 
 class Values(JSONStep):
