@@ -75,19 +75,35 @@ def get_path(doc: JSONDoc, path: PathSpec, strict: bool = True):
     return get_path(item, tail, strict)
 
 
-def iterate_steps(doc: JSONDoc, path: PathSpec, steps: list[JSONStep]):
+def iterate_steps(doc: JSONDoc, base_path: PathSpec, steps: list[JSONStep]):
+    '''
+    Iterate through a JSON document based on the specified base path and query steps.
+
+    This will:
+    - Navigate to the `base_path` within the document.
+    - Resolve the first query step in `steps` (if there is one).
+    - Recursively apply the remaining `steps` (if there are any).
+    - Return the resolved path.
+
+    Parameters:
+        doc: The JSON document.
+        base_path: The initial path through the document (possibly empty). This should be
+            an already resolved path.
+        steps: Query steps to resolve from `base_path`.
+    '''
+
     if len(steps):
         next = steps[0]
         rest = steps[1:]
-        for subpath in next.iterate(doc, path):
+        for subpath in next.iterate(doc, base_path):
             yield from iterate_steps(doc, subpath, rest)
     else:
-        yield doc, path
+        yield doc, base_path
 
 
 class JSONStep:
     '''
-    Parent class for JSON step constructors.
+    Parent class for JSON query step constructors.
 
     Parameters:
         filter: Optional function to filter the results of the current query.
