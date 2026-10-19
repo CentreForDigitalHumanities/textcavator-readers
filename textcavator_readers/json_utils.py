@@ -121,12 +121,12 @@ class JSONQuery:
         self.filter = filter
 
 
-    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
-        raise NotImplementedError('find_in_tree must be implemented in child classes')
+    def find_in_obj(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+        raise NotImplementedError('find_in_obj must be implemented in child classes')
 
 
     def iterate(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
-        results = self.find_in_tree(doc, base_path)
+        results = self.find_in_obj(doc, base_path)
         if self.filter:
             for base_path in results:
                 obj = get_path(doc, base_path)
@@ -171,7 +171,7 @@ class Key(JSONQuery):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+    def find_in_obj(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
         obj = get_path(doc, base_path)
         subpaths = self._search(obj, recursive=self.recursive)
         yield from ([*base_path, *path] for path in subpaths)
@@ -205,7 +205,7 @@ class Index(JSONQuery):
         self.index = index
         super().__init__(**kwargs)
 
-    def find_in_tree(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+    def find_in_obj(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
         obj = get_path(doc, base_path)
         if isinstance(obj, list):
             if self.index < 0:
@@ -241,7 +241,7 @@ class Path(JSONQuery):
         return [step for subpath in path for step in parse_element(subpath)]
 
 
-    def find_in_tree(self, doc, base_path):
+    def find_in_obj(self, doc, base_path):
         obj = get_path(doc, base_path)
         try:
             get_path(obj, self.path)
@@ -257,7 +257,7 @@ class Root(JSONQuery):
     Generally, this should only be used as the first step in a sequence.
     '''
     
-    def find_in_tree(self, doc, base_path):
+    def find_in_obj(self, doc, base_path):
         return [[]]
 
 
@@ -282,7 +282,7 @@ class Parent(JSONQuery):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc, base_path):
+    def find_in_obj(self, doc, base_path):
         if len(base_path) >= self.level:
             yield base_path[:-self.level]
         else:
@@ -306,7 +306,7 @@ class ParentKey(JSONQuery):
         super().__init__(**kwargs)
 
 
-    def find_in_tree(self, doc, base_path):
+    def find_in_obj(self, doc, base_path):
         if self.key in base_path:
             index = len(base_path) - next(i for i, value in enumerate(reversed(base_path)) if value == self.key)
             yield base_path[:index]
@@ -320,7 +320,7 @@ class Values(JSONQuery):
     Used to get all values from a dictionary or list object.
     '''
 
-    def find_in_tree(self, doc, base_path):
+    def find_in_obj(self, doc, base_path):
         obj = get_path(doc, base_path)
         if isinstance(obj, list):
             for i in range(len(obj)):

@@ -56,7 +56,7 @@ key_step_cases = [
 @pytest.mark.parametrize('obj,path,key,expected', key_step_cases)
 def test_key_step(obj, path, key, expected):
     step = Key(key)
-    result = list(step.find_in_tree(obj, path))
+    result = list(step.find_in_obj(obj, path))
     assert result == expected
 
 
@@ -91,13 +91,13 @@ index_step_cases = [
 @pytest.mark.parametrize('obj,path,index,expected', index_step_cases)
 def test_index_step(obj, path, index, expected):
     step = Index(index)
-    result = list(step.find_in_tree(obj, path))
+    result = list(step.find_in_obj(obj, path))
     assert result == expected
 
 
 def test_root_step():
     step = Root()
-    result = list(step.find_in_tree(
+    result = list(step.find_in_obj(
         {'foo': {'bar': 'baz'}},
         ['foo']
     ))
@@ -118,7 +118,7 @@ path_step_cases = [
 @pytest.mark.parametrize('obj,path,subpath,expected', path_step_cases)
 def test_path_step(obj, path, subpath, expected):
     step = Path(*subpath)
-    result = list(step.find_in_tree(obj, path))
+    result = list(step.find_in_obj(obj, path))
     assert result == expected
 
 
@@ -135,15 +135,15 @@ def test_filter_step():
 
 def test_values_step():
     step = Values()
-    assert list(step.find_in_tree(['foo', 'bar'], [])) == [[0], [1]]
-    assert list(step.find_in_tree({'foo': 1, 'bar': 2}, [])) == [['foo'], ['bar']]
-    assert list(step.find_in_tree('foo', [])) == []
-    assert list(step.find_in_tree({'foo': ['bar', 'baz']}, ['foo'])) == [['foo', 0], ['foo', 1]]
+    assert list(step.find_in_obj(['foo', 'bar'], [])) == [[0], [1]]
+    assert list(step.find_in_obj({'foo': 1, 'bar': 2}, [])) == [['foo'], ['bar']]
+    assert list(step.find_in_obj('foo', [])) == []
+    assert list(step.find_in_obj({'foo': ['bar', 'baz']}, ['foo'])) == [['foo', 0], ['foo', 1]]
 
 
 def test_parent():
     step = Parent()
-    assert list(step.find_in_tree({'foo': {'bar': 'baz'}}, ['foo', 'bar'])) == [['foo']]
+    assert list(step.find_in_obj({'foo': {'bar': 'baz'}}, ['foo', 'bar'])) == [['foo']]
 
 
 def test_parent_key():
