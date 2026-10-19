@@ -122,11 +122,34 @@ class JSONQuery:
 
 
     def find_in_obj(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+        '''
+        Find initial matches in the JSON document.
+
+        This should be implemented on child classes.
+
+        Parameters:
+            doc: The full JSON document to query.
+            base_path: Path to the entry point within `doc` from which the query should
+                start.
+        
+        Returns:
+            An iterable of resolved paths matching the query. Will be empty if nothing
+            matches.
+
+        Raises:
+            NotImplementedError: Raised if this method is not overridden.
+            LookupError: May be raised in implementation if the base path cannot
+                be resolved in the document.   
+        '''
         raise NotImplementedError('find_in_obj must be implemented in child classes')
 
 
-    def iterate(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
-        results = self.find_in_obj(doc, base_path)
+    def _filter_results(self, doc: JSONDoc, results: Iterable[JSONPath]) -> Iterable[JSONPath]:
+        '''
+        Filter initial results.
+
+        This applies filtering based on general parameters (currently just `filter`).
+        '''
         if self.filter:
             for base_path in results:
                 obj = get_path(doc, base_path)
@@ -135,6 +158,26 @@ class JSONQuery:
         else:
             yield from results
 
+
+    def iterate(self, doc: JSONDoc, base_path: JSONPath) -> Iterable[JSONPath]:
+        '''
+        Iterate through the JSON document to find matches.
+
+        This will call `find_in_obj` to find initial matches and then call
+        `filter_results` to possibly filter matches.
+        
+        Parameters:
+            doc: The full JSON document to query.
+            base_path: Path to the entry point within `doc` from which the query should
+                start.
+        
+        Returns:
+            An iterable of resolved paths matching the query. Will be empty if nothing
+            matches.
+        '''
+        
+        results = self.find_in_obj(doc, base_path)
+        yield from self._filter_results(doc, results)
 
 class Key(JSONQuery):
     '''
