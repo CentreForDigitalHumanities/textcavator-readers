@@ -6,7 +6,7 @@ from typing import Union
 from textcavator_readers.extract import JSON
 from textcavator_readers.readers.core import Field
 from textcavator_readers.readers.json import JSONReader
-from textcavator_readers.json.query import Key, Values, Root, Path, Parent
+from textcavator_readers.json_utils import Key, Values, Root, Path, Parent
 
 def merge_lines(lines: Union[list, str]) -> str:
     if isinstance(lines, list):

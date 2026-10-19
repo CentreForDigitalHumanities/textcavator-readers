@@ -1,5 +1,5 @@
 import pytest
-from textcavator_readers.json.query import (
+from textcavator_readers.json_utils import (
     is_primitive, get_path, Key, Index, Root, Path, Filter, Values, MultiValue,
     iterate_steps, Parent
 )

@@ -3,14 +3,14 @@ This module defines the JSONReader.
 
 It can parse documents nested in one file or multiple files with one document each.
 
-Uses the Python base library `json` and the utilities provided in `textcavator_readers.json.query`
+Uses the Python base library `json` and the utilities provided in `textcavator_readers.json_utils`
 '''
 
 import json
 
 from .core import Reader
 import textcavator_readers.extract as extract
-from textcavator_readers.json.query import JSONStep, iterate_steps
+from textcavator_readers.json_utils import JSONStep, iterate_steps
 
 class JSONReader(Reader):
     '''
@@ -28,7 +28,7 @@ class JSONReader(Reader):
     Examples:
         ### Multiple documents in one file:
         ```python
-        from textcavator_readers.json.query import Key, Root, Values
+        from textcavator_readers.json_utils import Key, Root, Values
 
         example_data = {
             'path': {

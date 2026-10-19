@@ -23,7 +23,7 @@ from pypdf import PageObject
 logger = logging.getLogger()
 
 from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
-from textcavator_readers.json.query import JSONStep, JSONDoc, PathSpec, iterate_steps, get_path
+from textcavator_readers.json_utils import JSONStep, JSONDoc, PathSpec, iterate_steps, get_path
 
 
 class Extractor(object):
