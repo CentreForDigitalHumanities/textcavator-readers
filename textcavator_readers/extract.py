@@ -6,7 +6,6 @@ Some extractors are intended to work with specific `Reader` classes, while other
 are generic.
 '''
 
-import re
 import logging
 import traceback
 from typing import Any, Dict, Callable, Union, List, Optional, Iterable
@@ -14,15 +13,16 @@ import warnings
 from functools import lru_cache
 
 import bs4
-import html
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
 from pypdf import PageObject
 
+from textcavator_readers.xml_extract import String
+from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
+
 
 logger = logging.getLogger()
 
-from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
 
 
 class Extractor(object):
@@ -390,10 +390,8 @@ class XML(Extractor):
         tags to chain queries. 
     - If you need to return _all_ matching tags, rather than the first match, set
         `multiple=True`.
-    - Choose how to extract a value: set `attribute`, `flatten`, or `extract_soup_func`
-        if needed.
-    - The extracted value is a string, or the output of `extract_soup_func`. To further
-        transform it, add a function for `transform`.
+    - Choose how to extract a value: set `extract` if needed.
+    - The extracted value may be transformed further with `transform`.
 
     Parameters:
         tags:
@@ -405,15 +403,13 @@ class XML(Extractor):
             Tags represent a query to select tags from current tag (e.g. the entry tag of
             the document). If you provide multiple, they are chained: each Tag query is
             applied to the results from the previous one.
-        attribute:
-            By default, the extractor will extract the text content of the tag. Set this
-            property to extract the value of an _attribute_ instead.
-        flatten:
-            When extracting the text content of a tag, `flatten` determines whether
-            the contents of non-text children are flattened. If `False`, only the direct
-            text content of the tag is extracted.
-            
-            This parameter does nothing if `attribute=True` is set.
+        extract:
+            Controls how selected XML tags are converted to a value. Default is to return
+            the string content of the tag. The `xml_extract` module provides utilities
+            for alternative options.
+
+            You can also provide a custom function here. It should take one argument, a
+            `bs4.element.Tag` object.
         toplevel:
             If `True`, the extractor will search from the toplevel tag of the XML
             document, rather than the entry tag for the document.
@@ -427,30 +423,23 @@ class XML(Extractor):
 
             Note: this option is not supported when this extractor is nested in another
             extractor (like `Combined`).
-        extract_soup_func: A function to extract a value directly from the soup element,
-            instead of using the content string or an attribute.
-            `attribute` and `flatten` will do nothing if this property is set.
         **kwargs: additional options to pass on to `Extractor`.
     '''
 
     def __init__(self,
                  *tags: TagSpecification,
-                 attribute: Optional[str] = None,
-                 flatten: bool = False,
+                 extract: Optional[Callable] = None,
                  toplevel: bool = False,
                  multiple: bool = False,
                  external_file: bool = False,
-                 extract_soup_func: Optional[Callable] = None,
                  **kwargs
                  ):
 
         self.tags = tags
-        self.attribute = attribute
-        self.flatten = flatten
         self.toplevel = toplevel
         self.multiple = multiple
         self.external_file = external_file
-        self.extract_soup_func = extract_soup_func
+        self.extract = extract or String()
         super().__init__(**kwargs)
 
     def _select(self, tags: Iterable[TagSpecification], soup: bs4.PageElement, metadata=None):
@@ -489,66 +478,7 @@ class XML(Extractor):
     def _extract(self, soup: Optional[bs4.PageElement]):
         if not soup:
             return None
-
-        # Use appropriate extractor
-        if self.extract_soup_func:
-            return self.extract_soup_func(soup)
-        elif self.attribute:
-            return self._attr(soup)
-        else:
-            if self.flatten:
-                return self._flatten(soup)
-            else:
-                return self._string(soup)    
-
-    def _string(self, soup):
-        '''
-        Output direct text contents of a node.
-        '''
-
-        if isinstance(soup, bs4.element.Tag):
-            return soup.string
-        else:
-            return [node.string for node in soup]
-
-    def _flatten(self, soup):
-        '''
-        Output text content of node and descendant nodes, disregarding
-        underlying XML structure.
-        '''
-
-        if isinstance(soup, bs4.element.Tag):
-            text = soup.get_text()
-        else:
-            text = '\n\n'.join(node.get_text() for node in soup)
-
-        _softbreak = re.compile(r'(?<=\S)\n(?=\S)| +')
-        _newlines = re.compile('\n+')
-        _tabs = re.compile('\t+')
-
-        return html.unescape(
-            _newlines.sub(
-                '\n',
-                _softbreak.sub(' ', _tabs.sub('', text))
-            ).strip()
-        )
-
-    def _attr(self, soup):
-        '''
-        Output content of nodes' attribute.
-        '''
-
-        if isinstance(soup, bs4.element.Tag):
-            if self.attribute == 'name':
-                return soup.name
-            return soup.attrs.get(self.attribute)
-        else:
-            if self.attribute == 'name':
-                return [ node.name for node in soup]
-            return [
-                node.attrs.get(self.attribute)
-                for node in soup if node.attrs.get(self.attribute) is not None
-            ]
+        return self.extract(soup)
 
 
 class CSV(Extractor):
