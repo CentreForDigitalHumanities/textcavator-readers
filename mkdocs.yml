@@ -9,7 +9,15 @@ nav:
     - 'example_csv.md'
     - 'example_xml.md'
     - 'example_custom.md'
-  - 'api.md'
+  - API:
+    - 'api/core.md'
+    - 'api/readers.md'
+    - 'api/extractors.md'
+    - 'api/utilities.md'
+theme:
+  name: readthedocs
+extra_css:
+  - style.css
 watch:
   - docs
   - textcavator_readers
@@ -18,4 +26,6 @@ plugins:
     handlers:
       python:
         options:
+          show_bases: true
+          show_root_toc_entry: false
           heading_level: 3
