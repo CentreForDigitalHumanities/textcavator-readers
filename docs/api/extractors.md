@@ -1,5 +1,3 @@
-# Extractors
-
-__Module:__ `textcavator_readers.extract`
+# `extract`
 
 ::: textcavator_readers.extract

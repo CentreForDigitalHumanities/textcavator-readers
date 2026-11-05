@@ -1,50 +1,34 @@
 # Readers
 
-## CSV reader
-
-__Module:__ `textcavator_readers.readers.csv`
+## `readers.csv`
 
 ::: textcavator_readers.readers.csv
 
-## XLSX reader
-
-__Module:__ `textcavator_readers.readers.xlsx`
+## `readers.xlsx`
 
 ::: textcavator_readers.readers.xlsx
 
-## XML reader
-
-__Module:__ `textcavator_readers.readers.xml`
+## `readers.xml`
 
 ::: textcavator_readers.readers.xml
 
-## HTML reader
-
-__Module:__ `textcavator_readers.readers.html`
+## `readers.html`
 
 ::: textcavator_readers.readers.html
 
-## PDF reader
-
-__Module:__ `textcavator_readers.readers.pdf`
+## `readers.pdf`
 
 ::: textcavator_readers.readers.pdf
 
 
-## RDF reader
-
-__Module:__ `textcavator_readers.readers.rdf`
+## `readers.rdf`
 
 ::: textcavator_readers.readers.rdf
 
-## JSON reader
-
-__Module:__ `textcavator_readers.readers.json`
+## `readers.json`
 
 ::: textcavator_readers.readers.json
 
-## RDS reader
-
-__Module:__ `textcavator_readers.readers.rds`
+## `readers.rds`
 
 ::: textcavator_readers.readers.rds
