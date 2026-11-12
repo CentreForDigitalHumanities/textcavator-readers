@@ -77,7 +77,7 @@ def get_path(doc: JSONDoc, path: JSONPath, strict: bool = True):
     return get_path(item, tail, strict)
 
 
-def iterate_steps(doc: JSONDoc, base_path: JSONPath, steps: list[JSONQuery]) -> Iterable[JSONPath]:
+def iterate_steps(doc: JSONDoc, base_path: JSONPath, steps: list['JSONQuery']) -> Iterable[JSONPath]:
     '''
     Iterate through a JSON document based on the specified base path and query steps.
 
