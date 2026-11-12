@@ -1,5 +1,6 @@
 '''
-Query utilities for traversing JSON trees
+Query utilities for traversing JSON trees. Intended to be used in combination with the
+`JSONReader` and `JSON` extractor.
 '''
 
 from typing import Iterable, Union, Callable, Optional, Any
@@ -35,8 +36,8 @@ def get_path(doc: JSONDoc, path: JSONPath, strict: bool = True):
     Unlike the `JSONQuery`-based queries, this is a straightforward lookup.
 
     Parameters:
-        doc: The JSON document. This can also be a JSON-compatible primitive value (like
-            an int).
+        doc: The JSON document. This can be any JSON-compatible value, including
+            primitives like integers or strings.
         path: The path as a sequence of indices from top to bottom. Indices must be
             string (for dictionaries) or integer (for lists).
         strict: If `True`, this will raise an exception if the path is not valid. If
@@ -44,9 +45,10 @@ def get_path(doc: JSONDoc, path: JSONPath, strict: bool = True):
     
     Raises:
         LookupError: Raised if `strict` is `True` and the path is not valid. This may
-            also be an inherited `IndexError` or `KeyError`, if the exception is due to
-            an invalid index for a list or dict (respectively).
+            also be an `IndexError` or `KeyError` (which inherit from `LookupError`), if
+            the exception is due to an invalid index for a list or dict (respectively).
     '''
+
     if not len(path):
         return doc
 
@@ -84,7 +86,10 @@ def iterate_steps(doc: JSONDoc, base_path: JSONPath, steps: list[JSONQuery]) -> 
     - Navigate to the `base_path` within the document.
     - Resolve the first query step in `steps` (if there is one).
     - Recursively apply the remaining `steps` (if there are any).
-    - Return the resolved path.
+    - Return the resolved path(s).
+
+    The resolved paths are always valid within the JSON. Note that the path iterator may
+    be empty, if the query cannot be resolved.
 
     Parameters:
         doc: The JSON document.
@@ -94,7 +99,8 @@ def iterate_steps(doc: JSONDoc, base_path: JSONPath, steps: list[JSONQuery]) -> 
             the base path as-is.
     
     Returns:
-        A generator with resolved paths.
+        A generator with resolved paths. To get the *value* at the given path, use
+            `get_path()`.
     '''
 
     if len(steps):
@@ -125,10 +131,15 @@ class JSONQuery:
         '''
         Find initial matches in the JSON document.
 
-        This should be implemented on child classes.
+        This should be implemented on child classes. Notes for implementation:
 
-        Note for implementation: The input provides the full JSON document for powerful
-        searching. To get the object at the `base_path`, use `get_path()`.
+        The input provides the full JSON document, together with the path to the current
+        entry point. In the implementation, use `get_path()` to retrieve the value at
+        `base_path`.
+
+        The output can be any iterable of paths. Depending on the type of query, lazy 
+        evaluation may save processing, in a context where only the first result will be
+        used.
 
         Parameters:
             doc: The full JSON document to query.
@@ -152,12 +163,14 @@ class JSONQuery:
         Filter initial results.
 
         This applies filtering based on general parameters (currently just `filter`).
+        This method should normally not be overridden, as this can lead to unexpected
+        or inconsistent behaviour.
         '''
         if self.filter:
-            for base_path in results:
-                obj = get_path(doc, base_path)
+            for path in results:
+                obj = get_path(doc, path)
                 if self.filter(obj):
-                    yield base_path
+                    yield path
         else:
             yield from results
 
@@ -167,7 +180,7 @@ class JSONQuery:
         Iterate through the JSON document to find matches.
 
         This will call `find_in_obj` to find initial matches and then call
-        `filter_results` to possibly filter matches.
+        `filter_results` to filter matches (if applicable).
         
         Parameters:
             doc: The full JSON document to query.
@@ -189,10 +202,9 @@ class Key(JSONQuery):
 
     Parameters:
         key: The key to retrieve.
-        recursive: If `True`, the JSON document is search recursively to find the
+        recursive: If `True`, the JSON document is searched recursively to find the
             dictionary key within nested lists/dictionaries.
         kwargs: Named arguments to pass on to `JSONQuery` constructor.
-    
     
     If `recursive`, the object is searched recursively for any matching key. This can be
     more robust and compact, but can increase processing times and return false positives,
@@ -245,7 +257,7 @@ class Index(JSONQuery):
     Get an index from an array object.
 
     Parameters:
-        index: The index to retrieve. Negative indices are also valid.
+        index: The index to retrieve. Negative indices are also supported.
         kwargs: Named arguments to pass on to `JSONQuery` constructor.
     '''
     
@@ -276,7 +288,7 @@ class Path(JSONQuery):
 
     Limitation: integer keys in dot-separated strings are not parsed as array indices.
     For example, `Path('foo.0.bar')` would not work if `0` is meant to index an array. In
-    that case, use `Path('foo', 0, 'bar')`. This may be added later.
+    that case, use `Path('foo', 0, 'bar')`.
     '''
 
     def __init__(self, *path: str | int, **kwargs: Any):
@@ -345,7 +357,7 @@ class ParentKey(JSONQuery):
     Get an ancestor specified by a specific dictionary key.
 
     Will find the *last* occurrence of the key within the path (i.e. the closest
-    to the current location).
+    to the current location in the tree).
 
     Parameters:
         key: The dict key to which the path should move up.
