@@ -619,13 +619,14 @@ class JSON(Extractor):
     An extractor to extract data from JSON data.
 
     Parameters:
-        steps: Path through the JSON data from 
+        steps: Path from which to extract the JSON data
     '''
 
     def __init__(self, *steps: JSONQuery, multiple=False, **kwargs):
         self.steps = list(steps)
         self.multiple = multiple
         super().__init__(**kwargs)
+
 
     def _apply(self, json: JSONDoc, doc_path: JSONPath, **kwargs) -> str:
         results = iterate_steps(json, doc_path, self.steps)
