@@ -3,15 +3,15 @@ Query utilities for traversing JSON trees. Intended to be used in combination wi
 `JSONReader` and `JSON` extractor.
 '''
 
-from typing import Iterable, Union, Callable, Optional, Any
+from typing import Iterable, Union, Callable, Optional, Any, TypeAlias
 
-type JSONPathElement = Union[str, int]
-type JSONPath = list[JSONPathElement]
+JSONPathElement: TypeAlias = Union[str, int]
+JSONPath: TypeAlias = list[JSONPathElement]
 
-type JSONPrimitive = Union[str, int, float, bool, None]
-type JSONDict = dict[str, 'JSONDoc']
-type JSONList = list['JSONDoc']
-type JSONDoc = Union[JSONPrimitive, JSONDict, JSONList]
+JSONPrimitive: TypeAlias = Union[str, int, float, bool, None]
+JSONDict: TypeAlias = dict[str, 'JSONDoc']
+JSONList: TypeAlias = list['JSONDoc']
+JSONDoc: TypeAlias = Union[JSONPrimitive, JSONDict, JSONList]
 
 def is_primitive(doc: JSONDoc):
     return isinstance(doc, str) or \
