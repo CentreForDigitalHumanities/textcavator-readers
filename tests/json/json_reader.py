@@ -6,7 +6,7 @@ from typing import Union
 from textcavator_readers.extract import JSON
 from textcavator_readers.readers.core import Field
 from textcavator_readers.readers.json import JSONReader
-
+from textcavator_readers.json_utils import Key, Values, Root, Path, Parent
 
 def merge_lines(lines: Union[list, str]) -> str:
     if isinstance(lines, list):
@@ -20,7 +20,6 @@ class JSONDocumentReader(JSONReader):
     """
 
     data_directory = os.path.join(os.path.dirname(__file__), "data")
-    single_document = True
 
     def sources(self, **kwargs):
         for i in range(1):
@@ -41,9 +40,9 @@ class JSONDocumentReader(JSONReader):
             )
             yield data.encode('utf-8')
 
-    act = Field("act", JSON("TITLE"))
-    character = Field("character", JSON("SCENE", "SPEECH", "SPEAKER"))
-    scene = Field("scene", JSON("SCENE", "TITLE"))
+    act = Field("act", JSON(Key("TITLE")))
+    character = Field("character", JSON(Path("SCENE", "SPEECH", "SPEAKER")))
+    scene = Field("scene", JSON(Key("SCENE"), Key("TITLE")))
 
     fields = [act, character, scene]
 
@@ -53,17 +52,16 @@ class JSONMultipleDocumentReader(JSONReader):
     Example JSON reader for testing parsing arrays in JSON, using JSON data from https://github.com/tux255/analyzing-shakespeare
     """
     data_directory = os.path.join(os.path.dirname(__file__), "data")
-    record_path = ["SCENE", "SPEECH"]
-    meta = ["TITLE", ["SCENE", "TITLE"], ["SCENE", "STAGEDIR"]]
+    record_path = [Key("SCENE"), Values(), Key("SPEECH"), Values()]
 
     def sources(self, **kwargs):
         for filename in glob(f"{self.data_directory}/*.json"):
             yield filename
 
-    act = Field("act", JSON("TITLE"))
-    scene = Field("scene", JSON("SCENE.TITLE"))
-    character = Field("character", JSON("SPEAKER"))
-    lines = Field("lines", JSON("LINE", transform=merge_lines))
-    stage_dir = Field("stage_direction", JSON("SCENE.STAGEDIR", transform=merge_lines))
+    act = Field("act", JSON(Root(), Key("TITLE")))
+    scene = Field("scene", JSON(Parent(2), Key("TITLE")))
+    character = Field("character", JSON(Key("SPEAKER")))
+    lines = Field("lines", JSON(Key("LINE"), transform=merge_lines))
+    stage_dir = Field("stage_direction", JSON(Parent(2), Key("STAGEDIR"), transform=merge_lines))
 
     fields = [act, scene, character, lines, stage_dir]

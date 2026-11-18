@@ -23,6 +23,7 @@ from pypdf import PageObject
 logger = logging.getLogger()
 
 from textcavator_readers.xml_tag import TagSpecification, resolve_tag_specification
+from textcavator_readers.json_utils import JSONQuery, JSONDoc, JSONPath, iterate_steps, get_path
 
 
 class Extractor(object):
@@ -615,28 +616,30 @@ class ExternalFile(Extractor):
 
 class JSON(Extractor):
     '''
-    An extractor to extract data from JSON.
-    This extractor assumes that each source is dictionary without nested lists.
-    When working with nested lists, use JSONReader to unnest.
+    An extractor to extract data from JSON data.
 
     Parameters:
-        keys (Iterable[str]): the keys with which to retrieve a field value from the
-            source. If empty, this returns the source as-is.
+        steps: Path from which to extract the JSON data
     '''
 
-    def __init__(self, *keys, **kwargs):
-        self.keys = list(keys)
+    def __init__(self, *steps: JSONQuery, multiple=False, **kwargs):
+        self.steps = list(steps)
+        self.multiple = multiple
         super().__init__(**kwargs)
 
-    def _apply(self, data: Union[str, dict], key_index: int = 0, **kwargs) -> str:
-        if not len(self.keys):
-            return data
-        key = self.keys[key_index]
-        data = data.get(key)
-        if len(self.keys) > key_index + 1:
-            key_index += 1
-            return self._apply(data, key_index)
-        return data
+
+    def _apply(self, json: JSONDoc, doc_path: JSONPath, **kwargs) -> str:
+        results = iterate_steps(json, doc_path, self.steps)
+        if self.multiple:
+            return [
+                get_path(json, path) for path in results
+            ]
+        else:
+            try:
+                path = next(results)
+            except StopIteration:
+                return None
+            return get_path(json, path)
 
 
 class RDF(Extractor):
